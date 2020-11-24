@@ -10,4 +10,4 @@ let ``Get url`` () =
 
 [<Fact>]
 let ``Get input for day 1 2019`` () =
-    Assert.NotNull(Utils.getProblem 2019 1)
+    Assert.NotNull(Utils.getInput "../../../../../.token" 2019 1)
