@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode2020
+﻿namespace AdventOfCode
 
 open System.IO;
 open FSharp.Data
@@ -16,3 +16,4 @@ module Utils =
         let content = Http.RequestString(url year day, httpMethod = "GET", cookies = [ "session", session ])
         File.WriteAllText("input.txt", content, Encoding.UTF8)
         content
+

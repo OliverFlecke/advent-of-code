@@ -1,7 +1,7 @@
 module Tests
 
 open Xunit
-open AdventOfCode2020
+open AdventOfCode
 
 [<Fact>]
 let ``Get url`` () =
