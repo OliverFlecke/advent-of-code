@@ -3,7 +3,9 @@
 open FSharp.Data
 
 module Utils =
-
+    // TODO: Better way to find token
+    let session =
+        System.IO.File.ReadAllText "../../../../.token"
 
     let url year day =
         $"https://adventofcode.com/{year}/day/{day}/input"
