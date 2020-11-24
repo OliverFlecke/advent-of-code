@@ -1,6 +1,8 @@
 ﻿namespace AdventOfCode2020
 
+open System.IO;
 open FSharp.Data
+open System.Text
 
 module Utils =
     // TODO: Better way to find token
@@ -11,4 +13,6 @@ module Utils =
         $"https://adventofcode.com/{year}/day/{day}/input"
 
     let getProblem year day =
-        Http.RequestString(url year day, httpMethod = "GET", cookies = [ "session", session ])
+        let content = Http.RequestString(url year day, httpMethod = "GET", cookies = [ "session", session ])
+        File.WriteAllText("input.txt", content, Encoding.UTF8)
+        content
