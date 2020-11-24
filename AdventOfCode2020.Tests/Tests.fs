@@ -1,12 +1,13 @@
 module Tests
 
 open Xunit
-open AdventOfCode2020.Say
+open AdventOfCode2020
 
 [<Fact>]
-let ``My test`` () =
-    Assert.True(true)
+let ``Get url`` () =
+    let url = Utils.url 2020 1
+    Assert.Equal(url, "https://adventofcode.com/2020/day/1/input")
 
 [<Fact>]
-let ``First test`` () =
-    Assert.True(hello "john")
+let ``Get input for day 1 2019`` () =
+    Assert.NotNull(Utils.getProblem 2019 1)
