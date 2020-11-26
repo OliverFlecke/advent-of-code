@@ -11,7 +11,7 @@ let rec fuelRec m =
     let f = fuel m
     if f <= 0 then 0 else f + fuelRec f
 
-let numbers = input.Trim().Split("\n") |> Seq.map int
+let numbers = ints input
 let a = numbers |> Seq.sumBy fuel
 submit 2019 1 1 a
 

@@ -66,3 +66,5 @@ module Utils =
             pWarn "Unknown response"
             printfn $"{response}"
             false
+
+    let ints (s: string) = s.Trim().Split("\n") |> Seq.map int
