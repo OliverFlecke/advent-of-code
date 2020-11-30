@@ -4,8 +4,10 @@ open System
 open System.IO
 open FSharp.Data
 open System.Text
+open System.Text.Json
+open System.Collections.Generic
 
-module Utils =
+module Core =
     let token =
         System.Environment.GetEnvironmentVariable("AOC_TOKEN")
 
@@ -25,7 +27,7 @@ module Utils =
     let answerUrl year day = url year day + "/answer"
     let cookies = [ "session", token ]
 
-    let getInput year day =
+    let input year day =
         let path =
             Path.Join("input", string year, $"{day}.txt")
 
@@ -38,7 +40,34 @@ module Utils =
             File.WriteAllText(path, content, Encoding.UTF8)
             content
 
-    let submit year day level answer =
+    type Level =
+        | One = 1
+        | Two = 2
+
+    let private localResults filename =
+        if File.Exists(filename) then
+            File.ReadAllText(filename)
+            |> JsonSerializer.Deserialize<Dictionary<string, Level>>
+        else
+            new Dictionary<string, Level>()
+
+    let markAsSolved year day level =
+        let filename = $"{year}.json"
+        let results = localResults filename
+
+        results.Item($"day{day}") <- level
+
+        File.WriteAllText(filename, JsonSerializer.Serialize(results), Encoding.UTF8)
+
+    let checkIfSolved year day (level: Level) =
+        let results = localResults $"{year}.json"
+        let key = $"day{day}"
+
+        results.ContainsKey(key)
+        && results.Item($"day{day}")
+        >= level
+
+    let submitToServer year day (level: Level) answer =
         printfn $"Submitting '{answer}' for problem '{year}/{day}' level '{level}'"
 
         let data =
@@ -48,23 +77,33 @@ module Utils =
         let response =
             Http.RequestString(answerUrl year day, body = FormValues data, httpMethod = "POST", cookies = cookies)
 
-        match response with
-        | _ when response.Contains("that's the right answer") ->
-            pSuccess "You answered correctly!"
-            true
-        | _ when response.Contains("already complete it") ->
-            pSuccess "You already completed this problem"
-            true
-        | _ when response.Contains("answer too recently") ->
-            pWarn "You have an answer to recently. Wait a bit and try again."
-            false
-        | _ when response.Contains("not the right answer") ->
-            pError "You answered incorrectly! Try again"
-            printfn $"{response}"
-            false
-        | _ ->
-            pWarn "Unknown response"
-            printfn $"{response}"
-            false
+        let correct =
+            match response with
+            | _ when response.Contains("that's the right answer") ->
+                pSuccess "You answered correctly!"
+                true
+            | _ when response.Contains("already complete it") ->
+                pSuccess "You already completed this problem"
+                true
+            | _ when response.Contains("answer too recently") ->
+                pWarn "You have an answer to recently. Wait a bit and try again."
+                false
+            | _ when response.Contains("not the right answer") ->
+                pError "You answered incorrectly! Try again"
+                printfn $"{response}"
+                false
+            | _ ->
+                pWarn "Unknown response"
+                printfn $"{response}"
+                false
 
-    let ints (s: string) = s.Trim().Split("\n") |> Seq.map int
+        correct
+
+    let submit (year: int) (day: int) (level: Level) answer =
+        if checkIfSolved year day level then
+            pSuccess $"You already have the star for {year} day {day}. Skipping submission"
+            true
+        else
+            let isCorrect = submitToServer year day level answer
+            if isCorrect then markAsSolved year day level
+            isCorrect

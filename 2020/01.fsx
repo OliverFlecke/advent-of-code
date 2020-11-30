@@ -4,5 +4,4 @@
 open AdventOfCode.Utils
 
 // let input = getInput 2020 1
-printfn $"Hello world"
 
