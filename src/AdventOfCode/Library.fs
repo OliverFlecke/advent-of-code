@@ -72,33 +72,30 @@ module Core =
         printfn $"Submitting '{answer}' for problem '{year}/{day}' level '{level}'"
 
         let data =
-            [ "level", string level
+            [ "level", string <| int level
               "answer", string answer ]
 
         let response =
             Http.RequestString(answerUrl year day, body = FormValues data, httpMethod = "POST", cookies = cookies)
 
-        let correct =
-            match response with
-            | _ when response.Contains("that's the right answer") ->
-                pSuccess "You answered correctly!"
-                true
-            | _ when response.Contains("already complete it") ->
-                pSuccess "You already completed this problem"
-                true
-            | _ when response.Contains("answer too recently") ->
-                pWarn "You have an answer to recently. Wait a bit and try again."
-                false
-            | _ when response.Contains("not the right answer") ->
-                pError "You answered incorrectly! Try again"
-                printfn $"{response}"
-                false
-            | _ ->
-                pWarn "Unknown response"
-                printfn $"{response}"
-                false
-
-        correct
+        match response with
+        | _ when response.Contains("That's the right answer") ->
+            pSuccess "You answered correctly!"
+            true
+        | _ when response.Contains("already complete it") ->
+            pSuccess "You already completed this problem"
+            true
+        | _ when response.Contains("answer too recently") ->
+            pWarn "You have an answer to recently. Wait a bit and try again."
+            false
+        | _ when response.Contains("not the right answer") ->
+            pError "You answered incorrectly! Try again"
+            printfn $"{response}"
+            false
+        | _ ->
+            pWarn "Unknown response"
+            printfn $"{response}"
+            false
 
     let submit (year: int) (day: int) (level: Level) answer =
         if checkIfSolved year day level then
