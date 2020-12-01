@@ -1,4 +1,3 @@
-open System.Collections.Generic
 #r "nuget: FSharp.Data"
 #r "../src/AdventOfCode/bin/Debug/net5.0/AdventOfCode.dll"
 
