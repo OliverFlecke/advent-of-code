@@ -7,37 +7,16 @@ open AdventOfCode.Utils
 let data = input 2020 1
 let numbers = ints data
 
-let rec combinationsImpl acc size set =
-    seq {
-        match size, set with
-        | n, x :: xs ->
-            if n > 0
-            then yield! combinationsImpl (x :: acc) (n - 1) xs
-            if n >= 0 then yield! combinationsImpl acc n xs
-        | 0, [] -> yield acc
-        | _, [] -> ()
-    }
-
-let combinations n set = combinationsImpl [] n set
-
-let a =
+let solve c =
     numbers
     |> Seq.toList
-    |> combinations 2
-    |> Seq.filter (fun (x :: y :: _) -> x + y = 2020)
-    |> Seq.take 1
-    |> Seq.map (fun (x :: y :: _) -> x * y)
+    |> combinations c
+    |> Seq.filter (fun ls -> ls |> Seq.take c |> Seq.sum = 2020)
     |> Seq.head
+    |> Seq.reduce ((*))
 
+let a = solve 2
 submit 2020 1 Level.One a
 
-let b =
-    numbers
-    |> Seq.toList
-    |> combinations 3
-    |> Seq.filter (fun (x :: y :: z :: _) -> x + y + z = 2020)
-    |> Seq.take 1
-    |> Seq.map (fun (x :: y :: z :: _) -> x * y * z)
-    |> Seq.head
-
+let b = solve 3
 submit 2020 1 Level.Two b

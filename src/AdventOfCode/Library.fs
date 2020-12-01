@@ -99,7 +99,7 @@ module Core =
 
     let submit (year: int) (day: int) (level: Level) answer =
         if checkIfSolved year day level then
-            pSuccess $"You already have the star for {year} day {day}. Skipping submission"
+            pSuccess $"You already have the star for {year} day {day}. Skipping submission (answer: {answer})"
             true
         else
             let isCorrect = submitToServer year day level answer
