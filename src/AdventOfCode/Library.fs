@@ -51,20 +51,21 @@ module Core =
         else
             new Dictionary<string, Level>()
 
-    let markAsSolved year day level =
+    let private dayKey (day: int) = $"day{day}"
+
+    let markAsSolved (year: int) (day: int) (level: Level) =
         let filename = $"{year}.json"
         let results = localResults filename
 
-        results.Item($"day{day}") <- level
+        results.Item(dayKey day) <- level
 
         File.WriteAllText(filename, JsonSerializer.Serialize(results), Encoding.UTF8)
 
     let checkIfSolved year day (level: Level) =
         let results = localResults $"{year}.json"
-        let key = $"day{day}"
 
-        results.ContainsKey(key)
-        && results.Item($"day{day}")
+        results.ContainsKey(dayKey day)
+        && results.Item(dayKey day)
         >= level
 
     let submitToServer year day (level: Level) answer =
