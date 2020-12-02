@@ -6,9 +6,6 @@ open AdventOfCode.Utils
 
 let data = input 2020 2
 
-let count c (str: string) =
-    str |> Seq.filter (fun x -> x = c) |> Seq.length
-
 let toRange (r: string) =
     match r.Split("-") |> Seq.map int |> Seq.toList with
     | s :: e :: _ -> (s, e)
@@ -26,15 +23,15 @@ let parse =
 let validate ((s, e), c, str) =
     count c str |> (fun n -> s <= n && n <= e)
 
-let a =
-    parse data |> Seq.filter validate |> Seq.length
+let solve =
+    parse >> Seq.filter validate >> Seq.length
 
-submit 2020 2 Level.One a
+submit 2020 2 Level.One (solve data)
 
 // Level 2
 let validate2 ((i, j), c, (str: string)) = (str.[i - 1] = c) <> (str.[j - 1] = c)
 
-let b =
-    parse data |> Seq.filter validate2 |> Seq.length
+let solve2 =
+    parse >> Seq.filter validate2 >> Seq.length
 
-submit 2020 2 Level.Two b
+submit 2020 2 Level.Two (solve2 data)

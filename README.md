@@ -1,4 +1,4 @@
-# Advent of Code 2020 in F\#
+# Advent of Code in F\#
 
 Contains template for getting puzzle input and solving problems for [Advent of Code](https://adventofcode.com).
 
@@ -12,5 +12,5 @@ To use the utilitize to retreive input and submit answers, the library will look
 export AOC_TOKEN=<your token>
 ```
 
-You can then use `getInput year day` to get your input for a given puzzle.
+You can then use `input year day` to get your input for a given puzzle.
 To submit an answer, use `submit year day level answer`.

@@ -6,6 +6,8 @@ module Utils =
 
     let ints (s: string) = s.Trim() |> splitLines |> Seq.map int
 
+    let count c = Seq.filter ((=) c) >> Seq.length
+
     let rec private combinationsImpl acc size set =
         seq {
             match size, set with
