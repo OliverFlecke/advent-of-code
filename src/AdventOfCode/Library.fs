@@ -31,14 +31,17 @@ module Core =
         let path =
             Path.Join("input", string year, $"{day}.txt")
 
-        if File.Exists path then
-            File.ReadAllText path
-        else
-            let content =
-                Http.RequestString(inputUrl year day, httpMethod = "GET", cookies = cookies)
+        let content =
+            if File.Exists path then
+                File.ReadAllText path
+            else
+                let content =
+                    Http.RequestString(inputUrl year day, httpMethod = "GET", cookies = cookies)
 
-            File.WriteAllText(path, content, Encoding.UTF8)
-            content
+                File.WriteAllText(path, content, Encoding.UTF8)
+                content
+
+        content.Trim()
 
     type Level =
         | One = 1

@@ -1,7 +1,10 @@
 namespace AdventOfCode
 
 module Utils =
-    let ints (s: string) = s.Trim().Split("\n") |> Seq.map int
+    let splitSpaces (str: string) = str.Split(" ")
+    let splitLines (str: string) = str.Split("\n")
+
+    let ints (s: string) = s.Trim() |> splitLines |> Seq.map int
 
     let rec private combinationsImpl acc size set =
         seq {

@@ -2,6 +2,7 @@
 #r "../src/AdventOfCode/bin/Debug/net5.0/AdventOfCode.dll"
 
 open AdventOfCode.Core
+open AdventOfCode.Utils
 
 let data = input 2020 2
 
@@ -18,9 +19,8 @@ let toTuple =
     | [| r; c; s |] -> (toRange r, Seq.head c, s)
     | _ -> failwith "unexpected number of elements in line"
 
-let parse (d: string) =
-    d.Trim().Split("\n")
-    |> Seq.map ((fun (str: string) -> str.Split " ") >> toTuple)
+let parse =
+    splitLines >> Seq.map (splitSpaces >> toTuple)
 
 // Level 1
 let validate ((s, e), c, str) =
@@ -32,7 +32,7 @@ let a =
 submit 2020 2 Level.One a
 
 // Level 2
-let validate2 (((i, j): int * int), c, (str: string)) = (str.[i - 1] = c) <> (str.[j - 1] = c)
+let validate2 ((i, j), c, (str: string)) = (str.[i - 1] = c) <> (str.[j - 1] = c)
 
 let b =
     parse data |> Seq.filter validate2 |> Seq.length
