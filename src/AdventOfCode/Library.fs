@@ -98,7 +98,6 @@ module Core =
             false
         | _ when response.Contains("not the right answer") ->
             pError "You answered incorrectly! Try again"
-            printfn $"{response}"
             false
         | _ ->
             pWarn "Unknown response"
