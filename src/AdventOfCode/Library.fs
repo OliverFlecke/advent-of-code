@@ -28,8 +28,9 @@ module Core =
     let cookies = [ "session", token ]
 
     let input year day =
-        let path =
-            Path.Join("input", string year, $"{day}.txt")
+        let dir = Path.Join [| "input"; string year |]
+        let path = Path.Join [| dir; $"{day}.txt" |]
+        Directory.CreateDirectory dir |> ignore
 
         let content =
             if File.Exists path then
@@ -55,9 +56,11 @@ module Core =
             new Dictionary<string, Level>()
 
     let private dayKey (day: int) = $"day{day}"
+    let private starDir = ".stars"
 
     let markAsSolved (year: int) (day: int) (level: Level) =
-        let filename = $"{year}.json"
+        Directory.CreateDirectory starDir |> ignore
+        let filename = Path.Join [| starDir; $"{year}.json" |]
         let results = localResults filename
 
         results.Item(dayKey day) <- level
@@ -65,7 +68,9 @@ module Core =
         File.WriteAllText(filename, JsonSerializer.Serialize(results), Encoding.UTF8)
 
     let checkIfSolved year day (level: Level) =
-        let results = localResults $"{year}.json"
+        let results =
+            localResults
+            <| Path.Join [| starDir; $"{year}.json" |]
 
         results.ContainsKey(dayKey day)
         && results.Item(dayKey day)
@@ -102,8 +107,7 @@ module Core =
 
     let submit (year: int) (day: int) (level: Level) answer =
         if checkIfSolved year day level then
-            pSuccess
-                $"You already have the star for {year}/{day} level {level}. Skipping submission (answer: {answer})"
+            pSuccess $"You already have the star for {year}/{day} level {level}. Skipping submission (answer: {answer})"
             true
         else
             let isCorrect = submitToServer year day level answer
