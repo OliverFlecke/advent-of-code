@@ -44,6 +44,15 @@ module Core =
 
         content.Trim()
 
+    let testInput year day =
+        let dir =
+            Path.Join [| "input"
+                         string year
+                         "test" |]
+
+        let path = Path.Join [| dir; $"{day}.txt" |]
+        File.ReadAllText path
+
     type Level =
         | One = 1
         | Two = 2
