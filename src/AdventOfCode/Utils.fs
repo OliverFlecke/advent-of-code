@@ -1,5 +1,7 @@
 namespace AdventOfCode
 
+open System.Text.RegularExpressions
+
 module Utils =
     let splitSpaces (str: string) = str.Split(" ")
     let splitLines (str: string) = str.Split("\n")
@@ -20,3 +22,12 @@ module Utils =
         }
 
     let combinations n set = combinationsImpl [] n set
+
+    let (|ReMatch|_|) pattern input =
+        if isNull input then
+            None
+        else
+            let m =
+                Regex.Match(input, pattern, RegexOptions.Compiled)
+
+            if m.Success then Some [ for x in m.Groups -> x ] else None

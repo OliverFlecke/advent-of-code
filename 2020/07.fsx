@@ -12,15 +12,6 @@ let testData = testInput 2020 7
 let sampleLine =
     "light red bags contain 1 bright white bag, 2 muted yellow bags."
 
-let (|CompiledMatch|_|) pattern input =
-    if input = null then
-        None
-    else
-        let m =
-            Regex.Match(input, pattern, RegexOptions.Compiled)
-
-        if m.Success then Some [ for x in m.Groups -> x ] else None
-
 let parseContent (str: string): Option<list<int * string>> =
     match str with
     | "no other bags." -> None
@@ -28,7 +19,7 @@ let parseContent (str: string): Option<list<int * string>> =
         Some
             (str.Split(",")
              |> Seq.map (function
-                 | CompiledMatch @"(\d+) (.*) bags?" [ _; count; name ] -> (int count.Value, name.Value)
+                 | ReMatch @"(\d+) (.*) bags?" [ _; count; name ] -> (int count.Value, name.Value)
                  | x -> failwith $"Unmatch pattern '{x}'")
              |> Seq.toList)
 
