@@ -10,6 +10,8 @@ module Utils =
 
     let count c = Seq.filter ((=) c) >> Seq.length
 
+    let print x = printfn $"{x}"
+
     let rec private combinationsImpl acc size set =
         seq {
             match size, set with
