@@ -33,3 +33,11 @@ module Utils =
                 Regex.Match(input, pattern, RegexOptions.Compiled)
 
             if m.Success then Some [ for x in m.Groups -> x ] else None
+
+    let rec tails =
+        function
+        | [] -> []
+        | _ :: xs -> xs :: tails xs
+
+    let filterOption (ls: seq<'a option>) = Seq.filter ((<>) None) ls
+    let mapOption f = Seq.map f >> filterOption

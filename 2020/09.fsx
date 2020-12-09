@@ -35,6 +35,8 @@ let a = solve 25 data
 submit 2020 9 Level.One <| a
 
 // Level 2
+let calculateWeakness (lst: seq<int64>) = Seq.min lst + Seq.max lst
+
 let weakness goal numbers =
     let mutable sum = 0L
     let mutable start = -1
@@ -50,15 +52,32 @@ let weakness goal numbers =
             sum <- sum + ns.[i]
             i <- i + 1
 
-    let sequence = numbers |> Seq.skip start |> Seq.take i
-    (Seq.min sequence) + (Seq.max sequence)
+    let lst = numbers |> Seq.skip start |> Seq.take i
+    calculateWeakness lst
 
 
 let solve2 (goal: int64) =
-    parse
-    >> Seq.map int64
-    >> Array.ofSeq
-    >> weakness (int64 goal)
+    parse >> Array.ofSeq >> weakness (int64 goal)
 
 solve2 127L testData |> print
 submit 2020 9 Level.Two <| solve2 a data
+
+// Functional solution to part 2
+let rec weakness2 goal acc lst tail =
+    match tail with
+    | [] -> if acc = goal then Some(calculateWeakness lst) else None
+    | (x :: xs) ->
+        match acc with
+        | _ when acc > goal -> None
+        | _ when acc = goal -> Some(calculateWeakness lst)
+        | _ -> weakness2 goal (acc + x) (x :: lst) xs
+
+let solve2' (goal: int64) =
+    parse
+    >> List.ofSeq
+    >> tails
+    >> mapOption (weakness2 goal 0L [])
+    >> Seq.head
+    >> Option.get
+
+submit 2020 9 Level.Two <| solve2' a data
