@@ -39,5 +39,19 @@ module Utils =
         | [] -> []
         | _ :: xs -> xs :: tails xs
 
-    let filterOption (ls: seq<'a option>) = Seq.filter ((<>) None) ls
+    let filterOption (ls: seq<'a option>) =
+        seq {
+            for x in ls do
+                match x with
+                | Some item -> yield item
+                | None -> ()
+        }
+
     let mapOption f = Seq.map f >> filterOption
+
+    let directions =
+        seq {
+            for x = -1 to 1 do
+                for y = -1 to 1 do
+                    if x <> 0 || y <> 0 then yield (x, y)
+        }
