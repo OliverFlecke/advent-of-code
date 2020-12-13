@@ -5,6 +5,7 @@ open System.IO
 open FSharp.Data
 open System.Text
 open System.Text.Json
+open System.Text.RegularExpressions
 open System.Collections.Generic
 
 module Core =
@@ -104,6 +105,12 @@ module Core =
             true
         | _ when response.Contains("answer too recently") ->
             pWarn "You have an answer to recently. Wait a bit and try again."
+
+            let m =
+                Regex.Match(response, @"(?<time>You have \d+s left to wait)")
+
+            if m.Success then pWarn m.Groups.["time"].Value
+
             false
         | _ when response.Contains("not the right answer") ->
             pError "You answered incorrectly! Try again"
