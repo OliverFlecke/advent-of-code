@@ -9,6 +9,8 @@ module Utils =
     let ints (s: string) = s.Trim() |> splitLines |> Seq.map int
 
     let count c = Seq.filter ((=) c) >> Seq.length
+    let modulo m n = ((n % m) + m) % m
+    let manhattan (x, y) = abs x + abs y
 
     let print x = printfn $"{x}"
 
