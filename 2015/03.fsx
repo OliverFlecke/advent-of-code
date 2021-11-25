@@ -1,5 +1,5 @@
 #r "nuget: FSharp.Data"
-#r "../src/AdventOfCode/bin/Debug/net5.0/AdventOfCode.dll"
+#r "../src/AdventOfCode/bin/Release/net5.0/AdventOfCode.dll"
 
 open AdventOfCode.Core
 
