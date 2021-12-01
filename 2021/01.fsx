@@ -1,5 +1,5 @@
 #r "nuget: FSharp.Data"
-#r "../src/AdventOfCode/bin/Debug/net5.0/AdventOfCode.dll"
+#r "../src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
 
 open AdventOfCode.Core
 open AdventOfCode.Utils
@@ -27,15 +27,16 @@ let solve numbers =
 
 let solver = parse >> solve
 
-printfn "A. Test data is correct: %A" <| (solver testData = 7)
+testSolution Level.One 7 <| solver testData
 
 let a = solver data
 submit 2021 1 Level.One a
 
+// Part B
 let transform (numbers: seq<int>) = numbers |> Seq.windowed 3 |> Seq.map Array.sum
 let solver' = parse >> transform >> solve
 
-printfn "B. Test data is correct: %A" <| (solver' testData = 5)
+testSolution Level.Two 5 <| solver' testData
 
 let b = solver' data
 submit 2021 1 Level.Two b

@@ -1,6 +1,7 @@
 namespace AdventOfCode
 
 open System.Text.RegularExpressions
+open AdventOfCode.Core
 
 module Utils =
     let splitSpaces (str: string) = str.Split(" ")
@@ -13,6 +14,11 @@ module Utils =
     let manhattan (x, y) = abs x + abs y
 
     let print x = printfn $"{x}"
+
+    let testSolution (level: Level) expected actual =
+        if expected = actual
+            then pSuccess $"Level {level} passed"
+            else pError $"Level {level} failed. Expected {expected}, got {actual}"
 
     let rec private combinationsImpl acc size set =
         seq {
