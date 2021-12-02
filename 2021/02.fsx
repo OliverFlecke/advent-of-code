@@ -17,6 +17,7 @@ type Command =
     | Down of int
     | Up of int
 
+// Parsing
 let parseCommand command =
     match command with
     | ReMatch "forward (?<amount>\d+)" [ _; amount ] -> Forward <| int amount.Value
@@ -26,28 +27,20 @@ let parseCommand command =
 
 let parse = splitLines >> List.ofSeq >> List.map parseCommand
 
-let solve transform initial commands =
-    let rec helper state commands =
-        match commands with
-        | [] -> state
-        | command :: rest -> helper (transform state command) rest
-
-    helper initial commands
-
+// Part A
 let transform (h, d) command =
     match command with
     | Forward x -> (h + x, d)
     | Up x -> (h, d - x)
     | Down x -> (h, d + x)
 
-let solver = parse >> solve transform (0, 0) >> (fun (h, d) -> h * d)
+let solve = parse >> Seq.fold transform (0, 0) >> (fun (h, d) -> h * d)
 
 // Test and submit A
-testSolution Level.One 150 <| solver testData
+testSolution Level.One 150 <| solve testData
 
-let a = solver data
+let a = solve data
 submit 2021 2 Level.One a
-
 
 // Part B
 let transform' (h, d, a) command =
@@ -56,10 +49,10 @@ let transform' (h, d, a) command =
     | Up x -> (h, d, a - x)
     | Down x -> (h, d, a + x)
 
-let solver' = parse >> solve transform' (0, 0, 0) >> (fun (h, d, _) -> h * d)
+let solve' = parse >> Seq.fold transform' (0, 0, 0) >> (fun (h, d, _) -> h * d)
 
 // Test and submit B
-testSolution Level.Two 900 <| solver' testData
+testSolution Level.Two 900 <| solve' testData
 
-let b = solver' data
+let b = solve' data
 submit 2021 2 Level.Two b
