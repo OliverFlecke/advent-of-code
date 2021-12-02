@@ -26,18 +26,21 @@ let parseCommand command =
 
 let parse = splitLines >> List.ofSeq >> List.map parseCommand
 
-let solve commands =
-    let rec helper (h, d) commands =
+let solve transform initial commands =
+    let rec helper state commands =
         match commands with
-        | [] -> (h, d)
-        | Forward x :: rest -> helper (h + x, d) rest
-        | Up x :: rest -> helper (h, d - x) rest
-        | Down x :: rest -> helper (h, d + x) rest
+        | [] -> state
+        | command :: rest -> helper (transform state command) rest
 
-    let (h, d) = helper (0, 0) commands
-    h * d
+    helper initial commands
 
-let solver = parse >> solve
+let transform (h, d) command =
+    match command with
+    | Forward x -> (h + x, d)
+    | Up x -> (h, d - x)
+    | Down x -> (h, d + x)
+
+let solver = parse >> solve transform (0, 0) >> (fun (h, d) -> h * d)
 
 // Test and submit A
 testSolution Level.One 150 <| solver testData
@@ -47,18 +50,13 @@ submit 2021 2 Level.One a
 
 
 // Part B
-let solve' commands =
-    let rec helper (horizontal, depth, aim) commands =
-        match commands with
-        | [] -> (horizontal, depth, aim)
-        | Forward x :: rest -> helper (horizontal + x, depth + aim * x, aim) rest
-        | Up x :: rest -> helper (horizontal, depth, aim - x) rest
-        | Down x :: rest -> helper (horizontal, depth, aim + x) rest
+let transform' (h, d, a) command =
+    match command with
+    | Forward x -> (h + x, d + a * x, a)
+    | Up x -> (h, d, a - x)
+    | Down x -> (h, d, a + x)
 
-    let (h, d, _) = helper (0, 0, 0) commands
-    h * d
-
-let solver' = parse >> solve'
+let solver' = parse >> solve transform' (0, 0, 0) >> (fun (h, d, _) -> h * d)
 
 // Test and submit B
 testSolution Level.Two 900 <| solver' testData
