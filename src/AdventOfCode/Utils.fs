@@ -6,6 +6,8 @@ open AdventOfCode.Core
 module Utils =
     let splitSpaces (str: string) = str.Split(" ")
     let splitLines (str: string) = str.Split("\n")
+    let splitComma (str: string) = str.Split(",")
+    let trim (str: string) = str.Trim()
 
     let ints (s: string) = s.Trim() |> splitLines |> Seq.map int
 
@@ -13,7 +15,7 @@ module Utils =
     let modulo m n = ((n % m) + m) % m
     let manhattan (x, y) = abs x + abs y
 
-    let print x = printfn $"{x}"
+    let print x = printfn "%A" x
 
     let testSolution (level: Level) expected actual =
         if expected = actual
