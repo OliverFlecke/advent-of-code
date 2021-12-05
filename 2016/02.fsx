@@ -28,38 +28,72 @@ let parse =
 
 let positionToNumber pos =
     match pos with
-    | (0, 0) -> 1
-    | (1, 0) -> 2
-    | (2, 0) -> 3
-    | (0, 1) -> 4
-    | (1, 1) -> 5
-    | (2, 1) -> 6
-    | (0, 2) -> 7
-    | (1, 2) -> 8
-    | (2, 2) -> 9
+    | (-1, -1) -> "1"
+    | (0, -1) -> "2"
+    | (1, -1) -> "3"
+    | (-1, 0) -> "4"
+    | (0, 0) -> "5"
+    | (1, 0) -> "6"
+    | (-1, 1) -> "7"
+    | (0, 1) -> "8"
+    | (1, 1) -> "9"
     | _ -> failwith $"Cannot find position for '{pos}'"
 
-let solve input =
-    let rec moveToNumber (x, y) dirs =
-        match dirs with
-        | [] -> (x, y)
-        | d :: dirs' ->
-            match d with
-            | Up -> moveToNumber (x, max 0 <| y - 1) dirs'
-            | Down -> moveToNumber (x, min 2 <| y + 1) dirs'
-            | Right -> moveToNumber (min 2 <| x + 1, y) dirs'
-            | Left -> moveToNumber (max 0 <| x - 1, y) dirs'
+let move (x, y) dir =
+    match dir with
+    | Up -> (x, max -1 <| y - 1)
+    | Down -> (x, min 1 <| y + 1)
+    | Right -> (min 1 <| x + 1, y)
+    | Left -> (max -1 <| x - 1, y)
 
+let solve initial move mapPosition input =
     let folder (last, state) dirs =
-        let result = moveToNumber last dirs
+        let result = List.fold move last dirs
         (result, state @ [ result ])
 
-    List.fold folder ((1, 1), []) input
+    input
+    |> List.fold folder (initial, [])
     |> snd
-    |> List.map positionToNumber
-    |> List.reduce (fun acc c -> acc * 10 + c)
+    |> List.map mapPosition
+    |> String.concat ""
 
-testSolution Level.One 1985
-<| (parse >> solve) testData
+let solver = parse >> solve (0, 0) move positionToNumber
 
-submit 2016 2 Level.One <| (parse >> solve) data
+testSolution Level.One "1985" <| solver testData
+submit 2016 2 Level.One <| solver data
+
+// Part B
+let move' (x, y) dir =
+    let pos =
+        match dir with
+        | Up -> (x, y - 1)
+        | Down -> (x, y + 1)
+        | Right -> (x + 1, y)
+        | Left -> (x - 1, y)
+
+    if manhattan pos > 2 then
+        (x, y)
+    else
+        pos
+
+let positionToNumber' pos =
+    match pos with
+    | (0, -2) -> "1"
+    | (-1, -1) -> "2"
+    | (0, -1) -> "3"
+    | (1, -1) -> "4"
+    | (-2, 0) -> "5"
+    | (-1, 0) -> "6"
+    | (0, 0) -> "7"
+    | (1, 0) -> "8"
+    | (2, 0) -> "9"
+    | (-1, 1) -> "A"
+    | (0, 1) -> "B"
+    | (1, 1) -> "C"
+    | (0, 2) -> "D"
+    | _ -> failwith $"Cannot map position '{pos}'"
+
+let solver' = (parse >> solve (-2, 0) move' positionToNumber')
+
+testSolution Level.Two "5DB3" <| solver' testData
+submit 2016 2 Level.Two <| solver' data
