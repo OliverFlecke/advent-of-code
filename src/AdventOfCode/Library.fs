@@ -48,11 +48,16 @@ module Core =
     let testInput year day =
         let dir =
             Path.Join [| "input"
-                         string year
-                         "test" |]
+                         "test"
+                         string year |]
 
         let path = Path.Join [| dir; $"{day}.txt" |]
-        File.ReadAllText path
+
+        if File.Exists path then
+            File.ReadAllText path
+        else
+            pError $"Test file could not be found. Path: '{path}'"
+            exit 1
 
     type Level =
         | One = 1
@@ -83,8 +88,7 @@ module Core =
             <| Path.Join [| starDir; $"{year}.json" |]
 
         results.ContainsKey(dayKey day)
-        && results.Item(dayKey day)
-        >= level
+        && results.Item(dayKey day) >= level
 
     let submitToServer year day (level: Level) answer =
         printfn $"Submitting '{answer}' for problem '{year}/{day}' level '{level}'"
@@ -109,7 +113,8 @@ module Core =
             let m =
                 Regex.Match(response, @"(?<time>You have \d+s left to wait)")
 
-            if m.Success then pWarn m.Groups.["time"].Value
+            if m.Success then
+                pWarn m.Groups.["time"].Value
 
             false
         | _ when response.Contains("not the right answer") ->
@@ -126,5 +131,8 @@ module Core =
             true
         else
             let isCorrect = submitToServer year day level answer
-            if isCorrect then markAsSolved year day level
+
+            if isCorrect then
+                markAsSolved year day level
+
             isCorrect
