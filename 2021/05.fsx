@@ -40,13 +40,24 @@ let parse =
 let filterHorizontalAndVertical lines =
     List.filter (fun ((x0, y0), (x1, y1)) -> x0 = x1 || y0 = y1) lines
 
-let intersects (x, y) ((x0, y0), (x1, y1)) =
-    x0 <= x && x <= x1 && y0 <= y && y <= y1
+let lineSequence ((x0, y0), (x1, y1)) =
+    let dir s e =
+        if s = e then 0
+        elif s < e then 1
+        else -1
 
-let markBoard board ((x0, y0), (x1, y1)) =
-    for x = min x0 x1 to max x0 x1 do
-        for y = min y0 y1 to max y0 y1 do
-            Array2D.set board x y <| board.[x, y] + 1
+    let xDir = dir x0 x1
+
+    let yDir = dir y0 y1
+
+    seq {
+        for i = 0 to max (abs (x0 - x1)) (abs (y0 - y1)) do
+            yield (x0 + i * xDir, y0 + i * yDir)
+    }
+
+let markBoard board line =
+    for (x, y) in lineSequence line do
+        Array2D.set board x y <| board.[x, y] + 1
 
     board
 
@@ -77,3 +88,8 @@ let solver =
 testSolution Level.One 5 <| solver testData
 
 submit 2021 5 Level.One <| solver data
+
+// Part B
+let solver' = parse >> solve
+testSolution Level.Two 12 <| solver' testData
+submit 2021 5 Level.Two <| solver' data
