@@ -18,17 +18,20 @@ module Utils =
     let print x = printfn "%A" x
 
     let testSolution (level: Level) expected actual =
-        if expected = actual
-            then pSuccess $"Level {level} passed"
-            else pError $"Level {level} failed. Expected {expected}, got {actual}"
+        if expected = actual then
+            pSuccess $"Level {level} passed"
+        else
+            pError $"Level {level} failed. Expected {expected}, got {actual}"
 
     let rec private combinationsImpl acc size set =
         seq {
             match size, set with
             | n, x :: xs ->
-                if n > 0
-                then yield! combinationsImpl (x :: acc) (n - 1) xs
-                if n >= 0 then yield! combinationsImpl acc n xs
+                if n > 0 then
+                    yield! combinationsImpl (x :: acc) (n - 1) xs
+
+                if n >= 0 then
+                    yield! combinationsImpl acc n xs
             | 0, [] -> yield acc
             | _, [] -> ()
         }
@@ -42,7 +45,10 @@ module Utils =
             let m =
                 Regex.Match(input, pattern, RegexOptions.Compiled)
 
-            if m.Success then Some [ for x in m.Groups -> x ] else None
+            if m.Success then
+                Some [ for x in m.Groups -> x ]
+            else
+                None
 
     let rec tails =
         function
@@ -65,3 +71,14 @@ module Utils =
                 for y = -1 to 1 do
                     if x <> 0 || y <> 0 then yield (x, y)
         }
+
+    let take amount (list: seq<'a>) =
+        let length = Seq.length list
+
+        seq {
+            for i in 0 .. amount .. length - 1 do
+                yield list |> Seq.skip i |> Seq.take amount
+        }
+
+    let transpose array =
+        array |> Array2D.mapi (fun x y _ -> array.[y, x])
