@@ -1,5 +1,7 @@
 namespace AdventOfCode
 
+open System.Security.Cryptography
+open System.Text
 open System.Text.RegularExpressions
 open AdventOfCode.Core
 
@@ -51,6 +53,11 @@ module Utils =
             else
                 None
 
+    let (|Int|_|) (str: string) =
+        match System.Int32.TryParse str with
+        | true, int -> Some int
+        | _ -> None
+
     let rec tails =
         function
         | [] -> []
@@ -83,3 +90,12 @@ module Utils =
 
     let transpose array =
         array |> Array2D.mapi (fun x y _ -> array.[y, x])
+
+    let md5 (message: string) =
+        use hasher = MD5.Create()
+
+        message
+        |> Encoding.ASCII.GetBytes
+        |> hasher.ComputeHash
+        |> Seq.map (fun c -> c.ToString("X2"))
+        |> Seq.reduce (+)
