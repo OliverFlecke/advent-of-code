@@ -20,9 +20,9 @@ type Command =
 // Parsing
 let parseCommand command =
     match command with
-    | ReMatch "forward (?<amount>\d+)" [ _; amount ] -> Forward <| int amount.Value
-    | ReMatch "down (?<amount>\d+)" [ _; amount ] -> Down <| int amount.Value
-    | ReMatch "up (?<amount>\d+)" [ _; amount ] -> Up <| int amount.Value
+    | ReMatch "forward (?<amount>\d+)" [ amount ] -> Forward <| int amount
+    | ReMatch "down (?<amount>\d+)" [ amount ] -> Down <| int amount
+    | ReMatch "up (?<amount>\d+)" [ amount ] -> Up <| int amount
     | _ -> failwith $"Unable to understand command '{command}'"
 
 let parse = splitLines >> List.ofSeq >> List.map parseCommand

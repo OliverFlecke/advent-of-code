@@ -32,7 +32,7 @@ The library then needs to be referenced in the `fsx` solution files when used.
 This would generally look like:
 
 ```fsharp
-#r "../src/AdventOfCode/bin/Release/net5.0/AdventOfCode.dll"
+#r "../src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
 ```
 
 ### Authentication

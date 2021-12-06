@@ -1,5 +1,5 @@
 #r "nuget: FSharp.Data"
-#r "../src/AdventOfCode/bin/Release/net5.0/AdventOfCode.dll"
+#r "../src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
 
 open AdventOfCode.Core
 open AdventOfCode.Utils
@@ -13,8 +13,8 @@ let parsePoint (str: string) =
 
 let parseLine =
     function
-    | ReMatch @"(turn on|toggle|turn off) (\d+,\d+) through (\d+,\d+)" [ _; cmd; s; e ] ->
-        (cmd.Value, parsePoint s.Value, parsePoint e.Value)
+    | ReMatch @"(turn on|toggle|turn off) (\d+,\d+) through (\d+,\d+)" [ cmd; s; e ] ->
+        (cmd, parsePoint s, parsePoint e)
     | _ -> failwith "Could not parse"
 
 let parse = splitLines >> Seq.map parseLine

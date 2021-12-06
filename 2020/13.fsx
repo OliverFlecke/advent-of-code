@@ -1,5 +1,5 @@
 #r "nuget: FSharp.Data"
-#r "../src/AdventOfCode/bin/Release/net5.0/AdventOfCode.dll"
+#r "../src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
 
 open AdventOfCode.Core
 open AdventOfCode.Utils
@@ -42,7 +42,7 @@ let parse2 =
     splitLines
     >> List.ofSeq
     >> (function
-    | [ _; busses ] ->
+    | [ busses ] ->
         busses.Split(",")
         |> Seq.map (function
             | "x" -> None

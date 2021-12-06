@@ -1,5 +1,5 @@
 #r "nuget: FSharp.Data"
-#r "../src/AdventOfCode/bin/Release/net5.0/AdventOfCode.dll"
+#r "../src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
 
 open System
 open AdventOfCode.Core
@@ -21,9 +21,9 @@ let run (inst: string []) =
         visited <- visited.Add(i)
         match inst.[i] with
         | ReMatch "nop" _ -> i <- i + 1
-        | ReMatch "jmp (?<number>[+-]\d+)" [ _; number ] -> i <- i + (int number.Value)
-        | ReMatch "acc (?<number>[+-]\d+)" [ _; number ] ->
-            acc <- acc + (int number.Value)
+        | ReMatch "jmp (?<number>[+-]\d+)" [ number ] -> i <- i + (int number)
+        | ReMatch "acc (?<number>[+-]\d+)" [ number ] ->
+            acc <- acc + (int number)
             i <- i + 1
         | x -> failwith $"Unknown instruction {x}"
 
@@ -40,11 +40,11 @@ let generate (inst: string []) =
         for i = inst.Length - 1 downto 0 do
             // printfn $"looking at {i} with {inst.[i]}"
             match inst.[i] with
-            | ReMatch "nop (?<rest>.*)" [ _; rest ] ->
+            | ReMatch "nop (?<rest>.*)" [ rest ] ->
                 let copy = Array.copy inst
                 copy.[i] <- $"jmp {rest}"
                 yield copy
-            | ReMatch "jmp (?<rest>.*)" [ _; rest ] ->
+            | ReMatch "jmp (?<rest>.*)" [ rest ] ->
                 let copy = Array.copy inst
                 copy.[i] <- $"nop {rest}"
                 yield copy

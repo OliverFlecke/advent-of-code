@@ -41,6 +41,19 @@ module Utils =
 
     let combinations n set = combinationsImpl [] n set
 
+    /// <summary>Use regex in a pattern match.</summary>
+    /// <param name="pattern">Regex pattern to match.</param>
+    /// <param name="input">The string to match.</param>
+    /// <returns>List of groups in the regex, if successful.</returns>
+    /// <example>
+    /// Can for example be used to match and extract numbers from a string.
+    ///
+    /// ```
+    /// match someString with
+    /// | ReMatch "int (\d+)" [ amount ] -> amount
+    /// | ReMatch "add (\d+) (\d+)" [ a; b ] -> a + b
+    /// ```
+    /// </example>
     let (|ReMatch|_|) pattern input =
         if isNull input then
             None
@@ -49,10 +62,18 @@ module Utils =
                 Regex.Match(input, pattern, RegexOptions.Compiled)
 
             if m.Success then
-                Some [ for x in m.Groups -> x ]
+                Some (List.skip 1 <| [ for x in m.Groups -> x.Value ])
             else
                 None
 
+    /// <summary>Pattern match an string to a int.</summary>
+    /// <example>
+    /// ```
+    /// match someString with
+    /// | Int i -> printfn "someString is an int '%i'" i
+    /// | _ -> printfn "someString '%s' is NOT an int" someString
+    /// ```
+    /// </example>
     let (|Int|_|) (str: string) =
         match System.Int32.TryParse str with
         | true, int -> Some int

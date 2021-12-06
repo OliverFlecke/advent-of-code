@@ -1,5 +1,5 @@
 #r "nuget: FSharp.Data"
-#r "../src/AdventOfCode/bin/Release/net5.0/AdventOfCode.dll"
+#r "../src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
 
 open AdventOfCode.Core
 open AdventOfCode.Utils
@@ -45,7 +45,7 @@ let toAction =
 
 let parseLine =
     function
-    | ReMatch @"(?<action>[NSEWLRF])(?<number>\d+)" [ _; action; number ] -> (toAction action.Value, int number.Value)
+    | ReMatch @"(?<action>[NSEWLRF])(?<number>\d+)" [ action; number ] -> (toAction action, int number)
     | x -> failwith $"unable to parse line {x}"
 
 let parse = splitLines >> Seq.map parseLine

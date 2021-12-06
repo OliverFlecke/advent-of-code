@@ -1,5 +1,5 @@
 #r "nuget: FSharp.Data"
-#r "../src/AdventOfCode/bin/Release/net5.0/AdventOfCode.dll"
+#r "../src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
 
 open AdventOfCode.Core
 open AdventOfCode.Utils
@@ -19,7 +19,7 @@ let parseContent (str: string): Option<list<int * string>> =
         Some
             (str.Split(",")
              |> Seq.map (function
-                 | ReMatch @"(\d+) (.*) bags?" [ _; count; name ] -> (int count.Value, name.Value)
+                 | ReMatch @"(\d+) (.*) bags?" [ count; name ] -> (int count, name)
                  | x -> failwith $"Unmatch pattern '{x}'")
              |> Seq.toList)
 
