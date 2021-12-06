@@ -7,29 +7,53 @@ open AdventOfCode.Utils
 let data = input 2021 6
 let testData = testInput 2021 6
 
-let parse = splitComma >> List.ofArray >> List.map int
+let parse =
+    splitComma >> Array.map int >> List.ofArray
 
 let solve days fish =
+    let groups =
+        fish
+        |> List.groupBy id
+        |> List.map (fun (day, bin) -> (day, List.length bin |> uint64))
+
+    let combine =
+        List.groupBy fst
+        >> List.map (fun (day, list) -> (day, List.sumBy snd list))
+
+    // Can't simply use remainder, as newborns are larger than 6
+    let nextDay x = if x = 0 then 6 else x - 1
+
     let rec run days fish =
         if days = 0 then
             fish
         else
-            print $"Day: {days}"
-            let born = List.filter ((=) 0) >> List.length
+            // printfn "Day: %d - %s" days
+            // <| (List.map string >> String.concat ",") fish
+
+            let born =
+                match fish |> List.tryFind (fst >> (=) 0) with
+                | None -> 0UL
+                | Some (_, amount) -> amount
+
             let fish' =
-                List.map (fun x -> if x = 0 then 6 else x - 1) fish
+                fish
+                |> List.map (fun (d, amount) -> (nextDay d, amount))
 
-            run (days - 1) (fish' @ List.init (born fish) (fun _ -> 8))
+            run (days - 1) <| combine fish' @ [ (8, born) ]
 
-    run days fish
-        |> List.length
+    run days groups |> List.sumBy snd
 
 let solver days = parse >> solve days
 
-testSolution Level.One 26 <| solver 18 testData
-testSolution Level.One 5934 <| solver 80 testData
+testSolution Level.One 26UL <| solver 18 testData
+
+testSolution Level.One 5934UL
+<| solver 80 testData
 
 submit 2021 6 Level.One <| solver 80 data
 
 // Part B
-testSolution Level.Two 26984457539L <| solver 256 testData
+testSolution Level.Two 26984457539UL
+<| solver 256 testData
+
+submit 2021 6 Level.Two <| solver 256 data
