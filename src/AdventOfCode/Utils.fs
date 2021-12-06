@@ -8,6 +8,7 @@ module Utils =
     let splitLines (str: string) = str.Split("\n")
     let splitComma (str: string) = str.Split(",")
     let trim (str: string) = str.Trim()
+    let toLower (str: string) = str.ToLowerInvariant()
 
     let ints (s: string) = s.Trim() |> splitLines |> Seq.map int
 
