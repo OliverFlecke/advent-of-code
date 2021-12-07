@@ -9,28 +9,25 @@ let testData = testInput 2021 7
 
 let parse = splitComma >> Seq.map int
 
-let fuel crabs pos =
-    crabs |> Seq.map ((-) pos >> abs) |> Seq.sum
-
-let solve fuel (crabs: seq<int>) =
+let solve cost (crabs: seq<int>) =
+    let fuel crabs pos =
+        crabs
+        |> Seq.map ((-) pos >> abs >> cost)
+        |> Seq.sum
 
     [ Seq.min crabs .. Seq.max crabs ]
     |> Seq.map (fuel crabs)
     |> Seq.min
 
-let solver = parse >> solve fuel
+let solver = parse >> solve id
 
 testSolution Level.One 37 <| solver testData
 submit 2021 7 Level.One <| solver data
 
 // Part B
+let sumOfNumbers n = (n * (n + 1)) / 2
 
-let fuel' crabs pos =
-    crabs
-    |> Seq.map ((-) pos >> abs >> (fun x -> [ 1 .. x ]) >> Seq.sum)
-    |> Seq.sum
-
-let solver' = parse >> solve fuel'
+let solver' = parse >> solve sumOfNumbers
 
 testSolution Level.Two 168 <| solver' testData
 submit 2021 7 Level.Two <| solver' data
