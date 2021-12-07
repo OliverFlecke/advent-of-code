@@ -34,6 +34,13 @@ module Utils =
         |> Seq.minBy (snd >> Seq.length)
         |> fst
 
+    /// <summary>Sort a sequence of elements by how common they are.</summary>
+    let sortByCommon xs =
+        xs
+        |> Seq.groupBy id
+        |> Seq.sortBy (snd >> Seq.length)
+        |> Seq.map fst
+
     // General functional helpers
     let flip f x y = f y x
 
