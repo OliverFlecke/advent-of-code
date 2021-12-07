@@ -62,7 +62,7 @@ module Utils =
                 Regex.Match(input, pattern, RegexOptions.Compiled)
 
             if m.Success then
-                Some (List.skip 1 <| [ for x in m.Groups -> x.Value ])
+                Some(List.skip 1 <| [ for x in m.Groups -> x.Value ])
             else
                 None
 
@@ -109,8 +109,8 @@ module Utils =
                 yield list |> Seq.skip i |> Seq.take amount
         }
 
-    let transpose array =
-        array |> Array2D.mapi (fun x y _ -> array.[y, x])
+    let transpose (mtx: _ [,]) =
+        Array2D.init (Array2D.length2 mtx) (Array2D.length1 mtx) (fun x y -> mtx.[y, x])
 
     let md5 (message: string) =
         use hasher = MD5.Create()
