@@ -27,6 +27,13 @@ module Utils =
         |> Seq.maxBy (snd >> Seq.length)
         |> fst
 
+    /// <summary>Find the least common element in a sequence.</summary>
+    let leastCommon xs =
+        xs
+        |> Seq.groupBy id
+        |> Seq.minBy (snd >> Seq.length)
+        |> fst
+
     // General functional helpers
     let flip f x y = f y x
 

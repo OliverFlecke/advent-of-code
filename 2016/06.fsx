@@ -9,12 +9,18 @@ let testData = testInput 2016 6
 
 let parse = splitLines >> array2D
 
-let solve lines =
+let solve code lines =
     [ 0 .. Array2D.length2 lines - 1 ]
-    |> Seq.map ((flip getCol) lines >> mostCommon >> string)
+    |> Seq.map ((flip getCol) lines >> code >> string)
     |> Seq.reduce (+)
 
-let solver = parse >> solve
+let solver = parse >> solve mostCommon
 
 testSolution Level.One "easter" <| solver testData
 submit 2016 6 Level.One <| solver data
+
+// Part B
+let solver' = parse >> solve leastCommon
+
+testSolution Level.Two "advent" <| solver' testData
+submit 2016 6 Level.Two <| solver' data
