@@ -6,6 +6,7 @@ open System.Text.RegularExpressions
 open AdventOfCode.Core
 
 module Utils =
+    // String helpers
     let splitSpaces (str: string) = str.Split(" ")
     let splitLines (str: string) = str.Split("\n")
     let splitComma (str: string) = str.Split(",")
@@ -14,9 +15,20 @@ module Utils =
 
     let ints (s: string) = s.Trim() |> splitLines |> Seq.map int
 
+    // List helpers
+
+    /// <summary>Count the number of an element in a sequence.</summary>
     let count c = Seq.filter ((=) c) >> Seq.length
-    let modulo m n = ((n % m) + m) % m
-    let manhattan (x, y) = abs x + abs y
+
+    /// <summary>Find the most common element in an sequence.</summary>
+    let mostCommon xs =
+        xs
+        |> Seq.groupBy id
+        |> Seq.maxBy (snd >> Seq.length)
+        |> fst
+
+    // General functional helpers
+    let flip f x y = f y x
 
     let print x = printfn "%A" x
 
@@ -109,9 +121,14 @@ module Utils =
                 yield list |> Seq.skip i |> Seq.take amount
         }
 
+    // Matrix operations
     let transpose (mtx: _ [,]) =
         Array2D.init (Array2D.length2 mtx) (Array2D.length1 mtx) (fun x y -> mtx.[y, x])
 
+    let getRow row (matrx: 'a [,]) = matrx.[row..row, *] |> Seq.cast<'a>
+    let getCol col (matrx: 'a [,]) = matrx.[*, col..col] |> Seq.cast<'a>
+
+    /// <summary>Calculate md5 hash of string.</summary>
     let md5 (message: string) =
         use hasher = MD5.Create()
 
@@ -129,3 +146,6 @@ module Utils =
     /// <returns>Sum of all numbers from 1 to n.</returns>
     /// <example>```1 + 2 + 3 + ... + n```</example>
     let sumOfNumbers n = (n * (n + 1)) / 2
+
+    let modulo m n = ((n % m) + m) % m
+    let manhattan (x, y) = abs x + abs y
