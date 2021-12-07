@@ -120,3 +120,12 @@ module Utils =
         |> hasher.ComputeHash
         |> Seq.map (fun c -> c.ToString("X2"))
         |> Seq.reduce (+)
+
+
+    // Math formulars
+
+    /// <summary>Calculate the sum of numbers from 1 to n.</summary>
+    /// <param name="n">Upper limit of the sum.</summary>
+    /// <returns>Sum of all numbers from 1 to n.</returns>
+    /// <example>```1 + 2 + 3 + ... + n```</example>
+    let sumOfNumbers n = (n * (n + 1)) / 2

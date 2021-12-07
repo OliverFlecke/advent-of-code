@@ -25,8 +25,6 @@ testSolution Level.One 37 <| solver testData
 submit 2021 7 Level.One <| solver data
 
 // Part B
-let sumOfNumbers n = (n * (n + 1)) / 2
-
 let solver' = parse >> solve sumOfNumbers
 
 testSolution Level.Two 168 <| solver' testData
