@@ -43,6 +43,8 @@ module Utils =
 
     // General functional helpers
     let flip f x y = f y x
+    let curry f a b = f (a, b)
+    let uncurry f (a, b) = f a b
 
     let print x = printfn "%A" x
 
