@@ -39,7 +39,7 @@ let parse' =
 let contains (str: string) (c: char) = str.Contains c
 
 let findDigits signal (digits: seq<string>) =
-    let digitFrom len =
+    let digitFromLength len map signal =
         signal
         |> Seq.filter (Seq.length >> (=) len)
         |> Seq.head
@@ -49,7 +49,7 @@ let findDigits signal (digits: seq<string>) =
             Seq.length s = 5
             && Seq.forall (contains s) map.[1])
 
-    let find9 (map: Map<int, string>) =
+    let find9 (map: Map<int, string>) signal =
         map.[3] + map.[4] |> Seq.distinct |> String.Concat
 
     let find0 (map: Map<int, string>) =
@@ -72,29 +72,18 @@ let findDigits signal (digits: seq<string>) =
     let find2 (map: Map<int, string>) =
         Seq.find (fun s -> Seq.length s = 5 && s <> map.[3] && s <> map.[5])
 
-    let mutable map =
-        Map [ (1, digitFrom 2)
-              (4, digitFrom 4)
-              (7, digitFrom 3)
-              (8, digitFrom 7) ]
-
     let map =
-        map.Change(3, (fun _ -> Some <| find3 map signal))
-
-    let map =
-        map.Change(9, (fun _ -> Some <| find9 map))
-
-    let map =
-        map.Change(0, (fun _ -> Some <| find0 map signal))
-
-    let map =
-        map.Change(6, (fun _ -> Some <| find6 map signal))
-
-    let map =
-        map.Change(5, (fun _ -> Some <| find5 map signal))
-
-    let map =
-        map.Change(2, (fun _ -> Some <| find2 map signal))
+        Seq.fold (fun (map: Map<int, string>) (d, f) -> map.Change(d, (fun _ -> Some <| f map signal))) Map.empty
+        <| seq [ (1, digitFromLength 2)
+                 (4, digitFromLength 4)
+                 (7, digitFromLength 3)
+                 (8, digitFromLength 7)
+                 (3, find3)
+                 (9, find9)
+                 (0, find0)
+                 (6, find6)
+                 (5, find5)
+                 (2, find2) ]
 
     let lookup =
         map
