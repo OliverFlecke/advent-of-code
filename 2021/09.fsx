@@ -44,3 +44,32 @@ let solver = parse >> solve
 
 testSolution Level.One 15 <| solver testData
 submit 2021 9 Level.One <| solver data
+
+// Part B
+let solve' map =
+    let rec findBasin (map: int [,]) basin visited frontier =
+        match frontier with
+        | [] -> basin
+        | (x, y) :: frontier' when map.[x, y] = 9 -> findBasin map basin (Set.add (x, y) visited) frontier'
+        | point :: frontier' ->
+            findBasin
+                map
+                (point :: basin)
+                (Set.add point visited)
+                (frontier'
+                 @ (neighbors map point
+                    |> Seq.filter (flip Set.contains visited >> not)
+                    |> Seq.filter (flip List.contains frontier' >> not)
+                    |> List.ofSeq))
+
+    findLowPoints map
+    |> Seq.map (fun point -> findBasin map [] Set.empty [ point ])
+    |> Seq.map (Seq.length)
+    |> Seq.sortDescending
+    |> Seq.take 3
+    |> Seq.reduce (*)
+
+let solver' = parse >> solve'
+
+testSolution Level.Two 1134 <| solver' testData
+submit 2021 9 Level.Two <| solver' data
