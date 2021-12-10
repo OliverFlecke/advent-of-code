@@ -2,6 +2,7 @@
 #r "../src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
 
 open AdventOfCode.Core
+open AdventOfCode.Types
 open AdventOfCode.Utils
 
 let data = input 2021 10
@@ -16,33 +17,6 @@ let points c =
     | '}' -> 1197
     | '>' -> 25137
     | _ -> failwith $"Unable to get point for '{c}'"
-
-
-type Either<'a, 'b> =
-    | Left of 'a
-    | Right of 'b
-
-let getRight elements =
-    elements
-    |> Seq.filter (fun x ->
-        match x with
-        | Left _ -> false
-        | Right _ -> true)
-    |> Seq.map (fun x ->
-        match x with
-        | Right value -> value
-        | _ -> failwith "Unsupported")
-
-let getLeft elements =
-    elements
-    |> Seq.filter (fun x ->
-        match x with
-        | Left _ -> true
-        | Right _ -> false)
-    |> Seq.map (fun x ->
-        match x with
-        | Left value -> value
-        | _ -> failwith "Unsupported")
 
 let closing (c: char) =
     c = '}' || c = ')' || c = ']' || c = '>'
@@ -67,7 +41,8 @@ let analyze str =
 
 let solve =
     List.map (List.ofSeq >> analyze)
-    >> getRight
+    >> Seq.filter Either.isRight
+    >> Seq.map Either.rightValue
     >> Seq.sumBy points
 
 let solver = parse >> solve
@@ -88,9 +63,10 @@ let solve' input =
     let values =
         input
         |> (List.map (List.ofSeq >> analyze)
-            >> getLeft
+            >> Seq.filter Either.isLeft
             >> Seq.map (
-                Seq.map (points' >> int64)
+                Either.leftValue
+                >> Seq.map (points' >> int64)
                 >> Seq.reduce (fun acc v -> acc * 5L + v)
             )
             >> List.ofSeq

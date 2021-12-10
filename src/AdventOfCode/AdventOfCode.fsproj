@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <NoWarn>${NoWarn};FS3031</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
-    <Compile Include="Utils.fs" />
+    <Compile Include="*.fs" />
   </ItemGroup>
 
   <ItemGroup>

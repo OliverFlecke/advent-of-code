@@ -21,7 +21,7 @@ module Core =
     let pError = printColor ConsoleColor.Red
     let pSuccess = printColor ConsoleColor.Green
 
-    let url year day =
+    let private url year day =
         $"https://adventofcode.com/{year}/day/{day}"
 
     let inputUrl year day = url year day + "/input"
