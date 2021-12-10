@@ -22,3 +22,13 @@ let ``left value member`` () =
 let ``static get left`` () =
     let either = Left "Hello"
     Assert.Equal("Hello", Either.getLeft either)
+
+[<Fact>]
+let ``map left`` () =
+    let either = Left 8
+    Assert.Equal(Left 16, Either.map ((*) 2) id either)
+
+[<Fact>]
+let ``map right`` () =
+    let either = Right "world"
+    Assert.Equal(Right "Hello world", Either.map id ((+) "Hello ") either)

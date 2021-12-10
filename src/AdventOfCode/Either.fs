@@ -34,3 +34,8 @@ module Types =
         let getLeft (either: Either<'a, 'b>) = either.leftValue
 
         let getRight (either: Either<'a, 'b>) = either.rightValue
+
+        let map l r either =
+            match either with
+            | Left x -> Left <| l x
+            | Right x -> Right <| r x
