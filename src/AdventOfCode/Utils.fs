@@ -122,12 +122,23 @@ module Utils =
 
     let mapOption f = Seq.map f >> filterOption
 
+    /// <summary>Get a vector to each horizontally, vertically, and diagonally adjacent point.</summary>
     let directions =
         seq {
             for x = -1 to 1 do
                 for y = -1 to 1 do
                     if x <> 0 || y <> 0 then yield (x, y)
         }
+
+    /// <summary>Get all the neighbors inside the grid.</summary>
+    let neighbors grid p =
+        directions
+        |> Seq.map (fun (x, y) -> x + fst p, y + snd p)
+        |> Seq.filter (fun (x, y) ->
+            0 <= x
+            && x < Array2D.length1 grid
+            && 0 <= y
+            && y < Array2D.length2 grid)
 
     let take amount (list: seq<'a>) =
         let length = Seq.length list

@@ -13,15 +13,6 @@ let parse =
     >> array2D
     >> Array2D.map (int >> (flip (-) <| int '0'))
 
-let neighbors map p =
-    directions
-    |> Seq.map (fun (x, y) -> x + fst p, y + snd p)
-    |> Seq.filter (fun (x, y) ->
-        0 <= x
-        && x < Array2D.length1 map
-        && 0 <= y
-        && y < Array2D.length2 map)
-
 let iter grid =
     let rec run grid =
         let next =
