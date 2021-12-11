@@ -71,18 +71,65 @@ let gof matrix pos value =
         elif 3 < alive then None
         else Some true
 
-let stringify x = if Option.isSome x then "#" else " "
+let paint matrix =
+    let stringify x = if Option.isSome x then "#" else " "
+    Console.CursorVisible <- false
+    Console.Clear()
 
+    let x_min, x_max, y_min, y_max = bounds matrix
+
+    for y in y_min .. y_max do
+        for x in x_min .. x_max do
+            let px, py =
+                Console.WindowWidth / 2 + x, Console.WindowHeight / 2 + y
+
+            if px >= 0 && py >= 0 then
+                Console.SetCursorPosition(px, py)
+
+                Map.tryFind (x, y) matrix
+                |> stringify
+                |> printf "%s"
+
+// ### Interesting states
+let blinker = set [ (0, 0); (0, 1); (0, 2) ]
+
+let toad =
+    set [ (-1, 0)
+          (-1, 1)
+          (0, 2)
+          (1, -1)
+          (2, 0)
+          (2, 1) ]
+
+let beacon =
+    set [ (-1, -1)
+          (-1, 0)
+          (0, -1)
+          (2, 1)
+          (1, 2)
+          (2, 2) ]
+
+let glider =
+    set [ (0, -1)
+          (1, 0)
+          (-1, 1)
+          (0, 1)
+          (1, 1) ]
+
+let rand = Random()
+
+let random size amount =
+    Seq.init amount (fun _ -> (rand.Next(-size, size), rand.Next(-size, size)))
+    |> Set.ofSeq
+
+// I'm using the SparseMatrix here, even though a simple set would be enough. I wanted to build the SparseMatrix for later use, where it might be necessary to store values
 let initial =
-    set [ (0, 0); (0, 1); (0, 2) ]
-    // I'm using the SparseMatrix here, even though a simple set would be enough. I wanted to build the SparseMatrix for later use, where it might be necessary to store values
+    random 4 20
     |> Set.map (fun x -> (x, true))
     |> Map.ofSeq
 
 Seq.initInfinite id
 |> Seq.scan (fun mx _ -> SparseMatrix.map (gof mx) mx) initial
-// |> Seq.take 5
 |> Seq.iter (fun mx ->
-    SparseMatrix.print stringify mx
-    printfn "-----"
-    System.Threading.Thread.Sleep(500))
+    paint mx
+    System.Threading.Thread.Sleep(200))
