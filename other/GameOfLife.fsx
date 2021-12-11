@@ -56,20 +56,13 @@ let aliveNeighbors matrix pos =
     |> filterOption
     |> Seq.length
 
-let gof matrix pos value =
-    match value with
-    | None ->
-        if aliveNeighbors matrix pos = 3 then
-            Some true
-        else
-            None
-
-    | Some _ ->
-        let alive = aliveNeighbors matrix pos
-
-        if alive < 2 then None
-        elif 3 < alive then None
-        else Some true
+let rules matrix pos value =
+    match (value, aliveNeighbors matrix pos) with
+    | None, 3
+    | Some _,
+      (2
+      | 3) -> Some true
+    | _ -> None
 
 let paint matrix =
     let stringify x = if Option.isSome x then "#" else " "
@@ -129,7 +122,7 @@ let initial =
     |> Map.ofSeq
 
 Seq.initInfinite id
-|> Seq.scan (fun mx _ -> SparseMatrix.map (gof mx) mx) initial
+|> Seq.scan (fun mx _ -> SparseMatrix.map (rules mx) mx) initial
 |> Seq.iter (fun mx ->
     paint mx
     System.Threading.Thread.Sleep(200))
