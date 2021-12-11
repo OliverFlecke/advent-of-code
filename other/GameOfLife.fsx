@@ -1,4 +1,4 @@
-#r "src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
+#r "../src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
 
 open System
 open AdventOfCode.Utils
