@@ -2,6 +2,7 @@ module Timing
 
 open System
 open System.Diagnostics
+open AdventOfCode
 
 type Timed = { result: string; time: TimeSpan }
 
@@ -25,13 +26,28 @@ let timeit f : Timed =
 let printTable results =
     printfn "                 | Answer A   | Time A        | Answer B   | Time B        | Total time"
 
-    for result in results do
+    let mutable totalTime = TimeSpan.Zero
+    let mutable totalA = TimeSpan.Zero
+    let mutable totalB = TimeSpan.Zero
+
+    for r in results do
         printfn
-            "Solution %i/%-2i | %10s | %10.1f µs | %10s | %10.1f µs |  %10.1f µs"
-            result.year
-            result.day
-            result.a.result
-            (toMicro result.a.time)
-            result.b.result
-            (toMicro result.b.time)
-            (toMicro (result.a.time + result.b.time))
+            "Solution %i/%-2i | %10s | %10.1f µs | %10s | %10.1f µs | %10.1f µs"
+            r.year
+            r.day
+            r.a.result
+            (toMicro r.a.time)
+            r.b.result
+            (toMicro r.b.time)
+            (toMicro (r.a.time + r.b.time))
+
+        totalA <- totalA + r.a.time
+        totalB <- totalB + r.b.time
+        totalTime <- totalTime + (r.a.time + r.b.time)
+
+    printColor ConsoleColor.Blue
+    <| sprintf
+        "Totals           |            | %10.1f µs |            | %10.1f µs | %10.1f µs"
+        (toMicro totalA)
+        (toMicro totalB)
+        (toMicro totalTime)
