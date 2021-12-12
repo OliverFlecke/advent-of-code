@@ -31,19 +31,16 @@ if Seq.isEmpty solutions then
     exit 1
 
 let execute (s: ISolution) : TimedResult =
-    let parsed = timeit (fun () -> input s.year s.day)
+    let data = input s.year s.day
 
-    let a =
-        timeit (fun () -> s.solveA parsed.result)
+    let a = timeit (fun () -> s.solveA data)
 
-    let b =
-        timeit (fun () -> s.solveB parsed.result)
+    let b = timeit (fun () -> s.solveB data)
 
     { year = s.year
       day = s.day
       a = a
-      b = b
-      parseTime = parsed.time }
+      b = b }
 
 let results = solutions |> Seq.map execute
 
