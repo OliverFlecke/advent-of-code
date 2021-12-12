@@ -8,11 +8,17 @@
   <ItemGroup>
     <Compile Include="ISolution.fs" />
     <Compile Include="2021/*.fs" />
+    <Compile Include="Parser.fs" />
+    <Compile Include="Timing.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AdventOfCode\AdventOfCode.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Argu" Version="6.1.1" />
   </ItemGroup>
 
 </Project>

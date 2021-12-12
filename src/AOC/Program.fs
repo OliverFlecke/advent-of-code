@@ -1,10 +1,15 @@
-﻿printfn "*** AOC solutions ***\n"
-
-open System
+﻿open System
 open System.Reflection
 open AdventOfCode
+open Timing
 
-open System.Diagnostics
+let args = Parser.getArgs
+
+if args.IsUsageRequested then
+    Parser.parser.PrintUsage() |> printfn "%s"
+    exit 0
+
+printfn "*** AOC solutions ***\n"
 
 let solutions =
     Assembly.GetExecutingAssembly().GetTypes()
@@ -12,24 +17,18 @@ let solutions =
         x.GetInterfaces()
         |> Seq.exists (fun i -> i = typeof<ISolution>))
     |> Seq.map (fun t -> Activator.CreateInstance(t) :?> ISolution)
+    |> Seq.filter (fun s ->
+        args.TryGetResult(Parser.Year)
+        |> Option.map ((=) s.year)
+        |> Option.defaultValue true)
+    |> Seq.filter (fun s ->
+        args.TryGetResult(Parser.Day)
+        |> Option.map ((=) s.day)
+        |> Option.defaultValue true)
 
-type Timed = { result: string; time: int64 }
-
-let timeit f : Timed =
-    let timer = new Stopwatch()
-    timer.Start()
-    let res = f ()
-    timer.Stop()
-
-    { result = res
-      time = timer.ElapsedMilliseconds }
-
-type TimedResult =
-    { year: int
-      day: int
-      a: Timed
-      b: Timed
-      parseTime: int64 }
+if Seq.isEmpty solutions then
+    pError "No solutions where found"
+    exit 1
 
 let execute (s: ISolution) : TimedResult =
     let parsed = timeit (fun () -> input s.year s.day)
@@ -48,24 +47,11 @@ let execute (s: ISolution) : TimedResult =
 
 let results = solutions |> Seq.map execute
 
-let printTable results =
-    for result in results do
-        printfn
-            "Solution %i/%2i | Part A: %10s %6i ms | Part B: %10s %6i ms | Parsing %10i ms  Total: %10i ms"
-            result.year
-            result.day
-            result.a.result
-            result.a.time
-            result.b.result
-            result.b.time
-            result.parseTime
-            (result.a.time + result.b.time + result.parseTime)
+for r in results do
+    if args.Contains Parser.Submit_A then
+        submit r.year r.day Level.One r.a.result |> ignore
+
+    if args.Contains Parser.Submit_B then
+        submit r.year r.day Level.Two r.b.result |> ignore
 
 do printTable results
-
-let doSubmit = true
-
-if doSubmit then
-    for r in results do
-        submit r.year r.day Level.One r.a.result |> ignore
-        submit r.year r.day Level.Two r.b.result |> ignore
