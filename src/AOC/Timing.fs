@@ -1,15 +1,18 @@
 module Timing
 
+open System
 open System.Diagnostics
 
-type Timed = { result: string; time: int64 }
+type Timed = { result: string; time: TimeSpan }
 
 type TimedResult =
     { year: int
       day: int
       a: Timed
       b: Timed
-      parseTime: int64 }
+      parseTime: TimeSpan }
+
+let toMicro (timespan: TimeSpan) = float timespan.Ticks / 10.0
 
 let timeit f : Timed =
     let timer = new Stopwatch()
@@ -18,17 +21,18 @@ let timeit f : Timed =
     timer.Stop()
 
     { result = res
-      time = timer.ElapsedMilliseconds }
+      time = TimeSpan.FromTicks timer.ElapsedTicks }
 
 let printTable results =
+    printfn "                 | Answer A   | Time A        | Answer B   | Time B        | Time parsing  | Total time"
     for result in results do
         printfn
-            "Solution %i/%2i | Part A: %10s %6i ms | Part B: %10s %6i ms | Parsing %10i ms  Total: %10i ms"
+            "Solution %i/%-2i | %10s | %10.1f µs | %10s | %10.1f µs | %10.1f µs | %10.1f µs"
             result.year
             result.day
             result.a.result
-            result.a.time
+            (toMicro result.a.time)
             result.b.result
-            result.b.time
-            result.parseTime
-            (result.a.time + result.b.time + result.parseTime)
+            (toMicro result.b.time)
+            (toMicro result.parseTime)
+            (toMicro (result.a.time + result.b.time + result.parseTime))
