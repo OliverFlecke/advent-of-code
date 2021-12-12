@@ -40,26 +40,16 @@ zg-he
 pj-fs
 start-RW"
 
-type Graph = Map<string, string list>
-
-let neighbors graph node =
-    Map.tryFind node graph
-    |> Option.defaultValue List.empty
-
-let addEdge (graph: Graph) (f, t) =
-    Map.add f (t :: neighbors graph f)
-    <| Map.add t (f :: neighbors graph t) graph
-
 let parse =
     splitLines
     >> Seq.map (fun str -> str.Split('-'))
     >> Seq.map (fun xs -> xs.[0], xs.[1])
-    >> Seq.fold addEdge Map.empty
+    >> Seq.fold Graph.Undirected.addEdge Graph.empty
 
 let isUpper (str: string) = Seq.forall (System.Char.IsUpper) str
 let isLower str = isUpper str |> not
 
-let solve (graph: Graph) =
+let solve graph =
     let bfs start =
         let rec bfs' (paths: string list list) visited (frontier: string list list) =
             match frontier with
@@ -68,7 +58,7 @@ let solve (graph: Graph) =
                 match path with
                 | "end" :: _ as path -> bfs' (path :: paths) visited frontier'
                 | node :: _ as path ->
-                    let neighbors = neighbors graph node
+                    let neighbors = Graph.neighbors graph node
 
                     neighbors
                     |> Seq.filter (flip Set.contains visited >> not)
@@ -109,7 +99,7 @@ let solve' graph =
                 match path with
                 | "end" :: _ as path -> bfs' twice (path :: paths) visited frontier'
                 | node :: _ as path ->
-                    let neighbors = neighbors graph node
+                    let neighbors = Graph.neighbors graph node
 
                     neighbors
                     |> Seq.filter (flip Set.contains visited >> not)
