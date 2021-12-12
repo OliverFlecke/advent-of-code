@@ -40,26 +40,21 @@ zg-he
 pj-fs
 start-RW"
 
-type Graph() =
-    member val edges = Map.empty with get, set
+type Graph = Map<string, string list>
 
-    member this.addEdge(f, t) =
-        this.edges <- Map.add f (t :: this.neighbors f) this.edges
-        this.edges <- Map.add t (f :: this.neighbors t) this.edges
+let neighbors graph node =
+    Map.tryFind node graph
+    |> Option.defaultValue List.empty
 
-    member this.neighbors node =
-        Map.tryFind node this.edges
-        |> Option.defaultValue List.empty
+let addEdge (graph: Graph) (f, t) =
+    Map.add f (t :: neighbors graph f)
+    <| Map.add t (f :: neighbors graph t) graph
 
 let parse =
     splitLines
     >> Seq.map (fun str -> str.Split('-'))
     >> Seq.map (fun xs -> xs.[0], xs.[1])
-    >> Seq.fold
-        (fun (graph: Graph) edge ->
-            graph.addEdge edge
-            graph)
-        (new Graph())
+    >> Seq.fold addEdge Map.empty
 
 let isUpper (str: string) = Seq.forall (System.Char.IsUpper) str
 
@@ -72,7 +67,7 @@ let solve (graph: Graph) =
                 match path with
                 | "end" :: _ as path -> bfs' (path :: paths) visited frontier'
                 | node :: _ as path ->
-                    let neighbors = graph.neighbors node
+                    let neighbors = neighbors graph node
 
                     neighbors
                     |> Seq.filter (flip Set.contains visited >> not)
@@ -97,8 +92,8 @@ let solve (graph: Graph) =
 
 let solver = parse >> solve
 
-// testSolution Level.One 10 <| solver testData
-// testSolution Level.One 19 <| solver mediumTest
-// testSolution Level.One 226 <| solver largeTest
+testSolution Level.One 10 <| solver testData
+testSolution Level.One 19 <| solver mediumTest
+testSolution Level.One 226 <| solver largeTest
 
 submit 2021 12 Level.One <| solver data
