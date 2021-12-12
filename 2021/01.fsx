@@ -5,18 +5,8 @@ open AdventOfCode.Core
 open AdventOfCode.Utils
 
 let data = input 2021 1
-let testData = "199
-200
-208
-210
-200
-207
-240
-269
-260
-263"
+let testData = testInput 2021 1
 
-type State = int * int
 let parse = ints
 
 let solve numbers =

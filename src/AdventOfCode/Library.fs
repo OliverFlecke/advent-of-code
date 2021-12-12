@@ -8,6 +8,7 @@ open System.Text.Json
 open System.Text.RegularExpressions
 open System.Collections.Generic
 
+[<AutoOpen>]
 module Core =
     let token =
         System.Environment.GetEnvironmentVariable("AOC_TOKEN")
