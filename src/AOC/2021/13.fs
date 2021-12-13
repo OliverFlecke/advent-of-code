@@ -3,12 +3,13 @@ namespace AdventOfCode.Solutions
 open AdventOfCode
 open AdventOfCode.Utils
 
-type Fold =
-    | X of int
-    | Y of int
+[<AutoOpen>]
+module private Day13 =
+    type Fold =
+        | X of int
+        | Y of int
 
-type Year2021Day13() =
-    member _.parse (str: string) =
+    let parse (str: string) =
         let split = str.Split("\n\n")
 
         let positions =
@@ -31,7 +32,7 @@ type Year2021Day13() =
 
         positions, folds
 
-    member _.foldMatrix matrix (fold: Fold) =
+    let foldMatrix matrix (fold: Fold) =
         match fold with
         | Y line ->
             let upper = SparseMatrix.filter (fun pos _ -> snd pos < line) matrix
@@ -43,11 +44,12 @@ type Year2021Day13() =
             let right = SparseMatrix.filter (fun pos _ -> fst pos > line) matrix
             Map.fold (fun s (x, y) v -> SparseMatrix.add (line - (x - line), y) v s) left right
 
-    member self.getParsedData input =
-        let positions, folds = self.parse input
+    let getParsedData input =
+        let positions, folds = parse input
 
         folds, positions |> Seq.map (fun x -> (x, true)) |> Map.ofSeq
 
+type Year2021Day13() =
     interface ISolution with
         member _.year = 2021
         member _.day = 13
@@ -56,15 +58,16 @@ type Year2021Day13() =
         member _.testB = Seq.empty
 
         member self.solveA input =
-            let folds, matrix = self.getParsedData input
+            let folds, matrix = getParsedData input
 
-            (self.foldMatrix matrix (Seq.head folds)).Keys.Count |> Int
+            (foldMatrix matrix (Seq.head folds)).Keys.Count |> Int
 
         member self.solveB input =
             let stringify x = if Option.isSome x then "#" else " "
-            let folds, matrix = self.getParsedData input
+            let folds, matrix = getParsedData input
 
-            Seq.fold (fun mx fold -> self.foldMatrix mx fold) matrix folds
-                |> SparseMatrix.print stringify
+            Seq.fold foldMatrix matrix folds
+                // |> SparseMatrix.print stringify
+                |> ignore // Ignoring output from this, to avoid it having to interfer with results table
 
             String "FJAHJGAH" // Hardcoded result for my input - Need to implement a way to convert the painted characters to real chars 🙄
