@@ -78,6 +78,9 @@ type Year2021Day1() =
         member _.year = 2021
         member _.day = 1
 
+        member _.testA = Seq.empty
+        member _.testB = Seq.empty
+
         member self.solveA input = ""
 
         member self.solveB input = ""
