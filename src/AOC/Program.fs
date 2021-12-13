@@ -9,7 +9,7 @@ if args.IsUsageRequested then
     Parser.parser.PrintUsage() |> printfn "%s"
     exit 0
 
-printfn "*** AOC solutions ***\n"
+// printfn "*** AOC solutions ***\n"
 
 let solutions =
     Assembly.GetExecutingAssembly().GetTypes()
@@ -31,7 +31,11 @@ if Seq.isEmpty solutions then
     exit 1
 
 let execute (s: ISolution) : TimedResult =
-    let data = input s.year s.day
+    let data =
+        if args.Contains Parser.Test_Data then
+            testInput s.year s.day
+        else
+            input s.year s.day
 
     let a = timeit (fun () -> s.solveA data)
 
@@ -51,4 +55,5 @@ for r in results do
     if args.Contains Parser.Submit_B then
         submit r.year r.day Level.Two r.b.result |> ignore
 
-do printTable results
+if args.Contains Parser.Print_Table then
+    printTable results

@@ -4,10 +4,12 @@ open System
 open Argu
 
 type CliArguments =
-    | Submit_A
-    | Submit_B
     | Year of int
     | Day of int
+    | Submit_A
+    | Submit_B
+    | Test_Data
+    | Print_Table
 
     interface IArgParserTemplate with
         member s.Usage =
@@ -16,6 +18,8 @@ type CliArguments =
             | Submit_B -> "Specify if solution for part B should be submitted"
             | Year _ -> "Year of solutions to run"
             | Day _ -> "Day of solutions to run"
+            | Test_Data -> "Run solutions with test data"
+            | Print_Table -> "Print a table of all the results"
 
 let parser = ArgumentParser.Create<CliArguments>(programName = "advent-of-code")
 

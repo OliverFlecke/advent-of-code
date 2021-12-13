@@ -5,7 +5,6 @@
     <NoWarn>${NoWarn};FS3031</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Graph.fs" />
     <Compile Include="*.fs" />
   </ItemGroup>
   <ItemGroup>
