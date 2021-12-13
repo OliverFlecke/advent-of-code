@@ -5,7 +5,9 @@ open System.IO
 open System.Diagnostics
 open AdventOfCode
 
-type Timed = { result: SolutionResult; time: TimeSpan }
+type Timed =
+    { result: SolutionResult
+      time: TimeSpan }
 
 type TimedResult =
     { year: int
@@ -26,7 +28,9 @@ let timeit f : Timed =
 
 let printTable results =
     let writer = Console.Out
-    printfn "                 | Answer A   | Time A        | Answer B   | Time B        | Total time"
+
+    printColor ConsoleColor.Blue
+    <| sprintf "                 |  Answer A  |    Time A     |  Answer B  |    Time B     | Total time"
 
     let mutable totalTime = TimeSpan.Zero
     let mutable totalA = TimeSpan.Zero
@@ -34,9 +38,11 @@ let printTable results =
 
     // Suppress the output writen inside the solutions when outputting the table.
     Console.SetOut(TextWriter.Null)
+
     for r in results do
 
         Console.SetOut(writer)
+
         printfn
             "Solution %i/%-2i | %10s | %10.1f µs | %10s | %10.1f µs | %10.1f µs"
             r.year
@@ -46,6 +52,7 @@ let printTable results =
             (r.b.result.ToString())
             (toMicro r.b.time)
             (toMicro (r.a.time + r.b.time))
+
         Console.SetOut(TextWriter.Null)
 
         totalA <- totalA + r.a.time
@@ -53,6 +60,7 @@ let printTable results =
         totalTime <- totalTime + (r.a.time + r.b.time)
 
     Console.SetOut(writer)
+
     printColor ConsoleColor.Blue
     <| sprintf
         "Totals           |            | %10.1f µs |            | %10.1f µs | %10.1f µs"
