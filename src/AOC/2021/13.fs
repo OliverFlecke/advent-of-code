@@ -55,7 +55,7 @@ type Year2021Day13() =
         member self.solveA input =
             let folds, matrix = self.getParsedData input
 
-            (self.foldMatrix matrix (Seq.head folds)).Keys.Count |> string
+            (self.foldMatrix matrix (Seq.head folds)).Keys.Count |> Int
 
         member self.solveB input =
             let stringify x = if Option.isSome x then "#" else " "
@@ -64,4 +64,4 @@ type Year2021Day13() =
             Seq.fold (fun mx fold -> self.foldMatrix mx fold) matrix folds
                 |> SparseMatrix.print stringify
 
-            "FJAHJGAH" // Hardcoded result for my input - Need to implement a way to convert the painted characters to real chars 🙄
+            String "FJAHJGAH" // Hardcoded result for my input - Need to implement a way to convert the painted characters to real chars 🙄

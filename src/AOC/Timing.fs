@@ -5,7 +5,7 @@ open System.IO
 open System.Diagnostics
 open AdventOfCode
 
-type Timed = { result: string; time: TimeSpan }
+type Timed = { result: SolutionResult; time: TimeSpan }
 
 type TimedResult =
     { year: int
@@ -41,9 +41,9 @@ let printTable results =
             "Solution %i/%-2i | %10s | %10.1f µs | %10s | %10.1f µs | %10.1f µs"
             r.year
             r.day
-            r.a.result
+            (r.a.result.ToString())
             (toMicro r.a.time)
-            r.b.result
+            (r.b.result.ToString())
             (toMicro r.b.time)
             (toMicro (r.a.time + r.b.time))
         Console.SetOut(TextWriter.Null)

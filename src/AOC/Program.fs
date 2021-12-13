@@ -1,6 +1,4 @@
-﻿open System
-open System.Reflection
-open AdventOfCode
+﻿open AdventOfCode
 open Timing
 
 let args = Parser.getArgs
@@ -9,22 +7,7 @@ if args.IsUsageRequested then
     Parser.parser.PrintUsage() |> printfn "%s"
     exit 0
 
-// printfn "*** AOC solutions ***\n"
-
-let solutions =
-    Assembly.GetExecutingAssembly().GetTypes()
-    |> Seq.filter (fun x ->
-        x.GetInterfaces()
-        |> Seq.exists (fun i -> i = typeof<ISolution>))
-    |> Seq.map (fun t -> Activator.CreateInstance(t) :?> ISolution)
-    |> Seq.filter (fun s ->
-        args.TryGetResult(Parser.Year)
-        |> Option.map ((=) s.year)
-        |> Option.defaultValue true)
-    |> Seq.filter (fun s ->
-        args.TryGetResult(Parser.Day)
-        |> Option.map ((=) s.day)
-        |> Option.defaultValue true)
+let solutions = Solution.getSolutions args
 
 if Seq.isEmpty solutions then
     pError "No solutions where found"
