@@ -52,6 +52,9 @@ type Year2021Day13() =
         member _.year = 2021
         member _.day = 13
 
+        member _.testA = seq [ (Int 17, None) ]
+        member _.testB = Seq.empty
+
         member self.solveA input =
             let folds, matrix = self.getParsedData input
 

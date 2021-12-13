@@ -22,10 +22,16 @@ type Year2021Day1() =
         member _.year = 2021
         member _.day = 1
 
-        member self.solveA input = input |> (self.parse >> self.solve >> Int)
+        member _.testA = seq [ (Int 7, None) ]
+
+        member _.testB = seq [ (Int 5, None) ]
+
+        member self.solveA input =
+            input |> (self.parse >> self.solve >> Int)
 
         member self.solveB input =
             let transform (numbers: seq<int>) =
                 numbers |> Seq.windowed 3 |> Seq.map Array.sum
 
-            input |> (self.parse >> transform >> self.solve >> Int)
+            input
+            |> (self.parse >> transform >> self.solve >> Int)

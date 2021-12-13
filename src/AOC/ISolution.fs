@@ -19,6 +19,10 @@ type public ISolution =
 
     abstract solveB : string -> SolutionResult
 
+    abstract testA : seq<SolutionResult * string option>
+
+    abstract testB : seq<SolutionResult * string option>
+
 module Solution =
     open System
     open System.Reflection
@@ -39,3 +43,4 @@ module Solution =
             args.TryGetResult(Day)
             |> Option.map ((=) s.day)
             |> Option.defaultValue true)
+        |> Seq.sortBy (fun s -> s.year * 100 + s.day)
