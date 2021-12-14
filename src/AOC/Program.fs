@@ -55,7 +55,7 @@ else
                 input
                 |> Option.defaultValue (testInput s.year s.day)
             ))
-        |> Seq.iter (fun (expected, actual) -> Utils.testSolution Level.One expected actual)
+        |> Seq.iter (fun (expected, actual) -> Utils.testSolution level expected actual)
 
     let execute (s: ISolution) =
         printfn "Running tests for %i/%i" s.year s.day

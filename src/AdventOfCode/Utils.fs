@@ -20,6 +20,15 @@ module Utils =
     /// <summary>Count the number of an element in a sequence.</summary>
     let count c = Seq.filter ((=) c) >> Seq.length
 
+    module Seq =
+        let perform f sequence =
+            Seq.iter f sequence
+            sequence
+
+        let performi f sequence =
+            Seq.iteri f sequence
+            sequence
+
     /// <summary>Find the most common element in an sequence.</summary>
     let mostCommon xs =
         xs
