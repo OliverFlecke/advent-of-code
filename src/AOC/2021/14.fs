@@ -18,18 +18,19 @@ module private Day14 =
 
         start, mapping
 
-    let iter mapping (str: string) =
-        str
-        |> Seq.windowed 2
-        |> Seq.map (fun pair ->
-            Map.tryFind (String.Concat pair) mapping
-            |> Option.map (fun c -> [| pair.[0]; c |])
-            |> Option.defaultValue pair.[..1])
-        |> Seq.collect id
-        |> String.Concat
-        |> flip (+) str.[str.Length - 1..]
-
+    // Naïve solution
     let solve mapping start amount =
+        let iter mapping (str: string) =
+            str
+            |> Seq.windowed 2
+            |> Seq.map (fun pair ->
+                Map.tryFind (String.Concat pair) mapping
+                |> Option.map (fun c -> [| pair.[0]; c |])
+                |> Option.defaultValue pair.[..1])
+            |> Seq.collect id
+            |> String.Concat
+            |> flip (+) str.[str.Length - 1..]
+
         let frequency =
             Seq.fold (fun str _ -> iter mapping str) start [ 1 .. amount ]
             |> Seq.groupBy id
@@ -38,10 +39,6 @@ module private Day14 =
             |> List.ofSeq
 
         Seq.last frequency - Seq.head frequency
-
-    let groupByCount =
-        Seq.groupBy id
-        >> Seq.map (fun (x, xs) -> x, Seq.length xs)
 
     let convert mapping (pair: string) =
         Map.tryFind pair mapping
@@ -55,10 +52,10 @@ module private Day14 =
             start
             |> Seq.windowed 2
             |> Seq.map String.Concat
-            |> groupByCount
+            |> Seq.frequency
             |> Seq.map (fun (a, b) -> a, int64 b)
 
-        let iter' mapping (pairs: seq<string * int64>) =
+        let folder mapping (pairs: seq<string * int64>) =
             pairs
             |> Seq.map (fun (pair, count) ->
                 convert mapping pair
@@ -67,9 +64,8 @@ module private Day14 =
             |> Seq.groupBy fst
             |> Seq.map (fun (s, ns) -> s, int64 <| Seq.sumBy snd ns)
 
-
         let frequency =
-            Seq.fold (fun pairs _ -> iter' mapping pairs) pairs [ 1 .. amount ]
+            Seq.fold (fun pairs _ -> folder mapping pairs) pairs [ 1 .. amount ]
             |> Seq.map (fun (pair, amount) -> pair.[0], amount)
             |> Seq.groupBy fst
             |> Seq.map (fun (c, ls) -> c, Seq.sumBy snd ls)

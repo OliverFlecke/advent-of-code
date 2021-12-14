@@ -16,11 +16,11 @@ module Utils =
     let ints (s: string) = s.Trim() |> splitLines |> Seq.map int
 
     // List helpers
-
-    /// <summary>Count the number of an element in a sequence.</summary>
-    let count c = Seq.filter ((=) c) >> Seq.length
-
     module Seq =
+        /// <summary>Count the number of an element in a sequence.</summary>
+        let count c = Seq.filter ((=) c) >> Seq.length
+
+        /// <summary>Perform a side-effect for each element in the sequenc.</summary>
         let perform f sequence =
             Seq.iter f sequence
             sequence
@@ -28,6 +28,12 @@ module Utils =
         let performi f sequence =
             Seq.iteri f sequence
             sequence
+
+        /// <summary>Compute the frequency map of each element in the list.</summary>
+        let frequency (s: seq<'a>) =
+            s
+            |> Seq.groupBy id
+            |> Seq.map (fun (x, xs) -> x, Seq.length xs)
 
     /// <summary>Find the most common element in an sequence.</summary>
     let mostCommon xs =
