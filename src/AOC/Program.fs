@@ -15,11 +15,7 @@ if Seq.isEmpty solutions then
 
 if not <| args.Contains Parser.Test_Data then
     let execute (s: ISolution) : TimedResult =
-        let data =
-            if args.Contains Parser.Test_Data then
-                testInput s.year s.day
-            else
-                input s.year s.day
+        let data = input s.year s.day
 
         let a = timeit (fun () -> s.solveA data)
         let b = timeit (fun () -> s.solveB data)
