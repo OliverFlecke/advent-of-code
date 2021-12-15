@@ -30,7 +30,7 @@ let printTable results =
     let writer = Console.Out
 
     printColor ConsoleColor.Blue
-    <| sprintf "                 |  Answer A  |    Time A     |  Answer B  |    Time B     | Total time"
+    <| sprintf "                 |     Answer A     |     Time A      |     Answer B     |     Time B      | Total time"
 
     let mutable totalTime = TimeSpan.Zero
     let mutable totalA = TimeSpan.Zero
@@ -44,7 +44,7 @@ let printTable results =
         Console.SetOut(writer)
 
         printfn
-            "Solution %i/%-2i | %10s | %10.1f µs | %10s | %10.1f µs | %10.1f µs"
+            "Solution %i/%-2i | %16s | %12.1f µs | %16s | %12.1f µs | %12.1f µs"
             r.year
             r.day
             (r.a.result.ToString())
@@ -63,7 +63,7 @@ let printTable results =
 
     printColor ConsoleColor.Blue
     <| sprintf
-        "Totals           |            | %10.1f µs |            | %10.1f µs | %10.1f µs"
+        "Totals           |                  | %12.1f µs |                  | %12.1f µs | %12.1f µs"
         (toMicro totalA)
         (toMicro totalB)
         (toMicro totalTime)
