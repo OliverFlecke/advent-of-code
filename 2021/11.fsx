@@ -2,7 +2,6 @@
 #r "../src/AdventOfCode/bin/Release/net6.0/AdventOfCode.dll"
 
 open AdventOfCode.Core
-open AdventOfCode.Types
 open AdventOfCode.Utils
 
 let data = input 2021 11
