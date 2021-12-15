@@ -15,7 +15,7 @@ type TimedResult =
       a: Timed
       b: Timed }
 
-let toMicro (timespan: TimeSpan) = float timespan.Ticks / 10.0
+let formatTimeSpan (timespan: TimeSpan) = timespan.ToString("s\.ffffff").PadLeft(15)
 
 let timeit f : Timed =
     let timer = new Stopwatch()
@@ -30,7 +30,7 @@ let printTable results =
     let writer = Console.Out
 
     printColor ConsoleColor.Blue
-    <| sprintf "                 |     Answer A     |     Time A      |     Answer B     |     Time B      | Total time"
+    <| sprintf "                 |     Answer A     |     Time A      |     Answer B     |     Time B      |   Total time"
 
     let mutable totalTime = TimeSpan.Zero
     let mutable totalA = TimeSpan.Zero
@@ -44,14 +44,14 @@ let printTable results =
         Console.SetOut(writer)
 
         printfn
-            "Solution %i/%-2i | %16s | %12.1f µs | %16s | %12.1f µs | %12.1f µs"
+            "Solution %i/%-2i | %16s | %s | %16s | %s | %s"
             r.year
             r.day
             (r.a.result.ToString())
-            (toMicro r.a.time)
+            (formatTimeSpan r.a.time)
             (r.b.result.ToString())
-            (toMicro r.b.time)
-            (toMicro (r.a.time + r.b.time))
+            (formatTimeSpan r.b.time)
+            (formatTimeSpan (r.a.time + r.b.time))
 
         Console.SetOut(TextWriter.Null)
 
@@ -63,7 +63,7 @@ let printTable results =
 
     printColor ConsoleColor.Blue
     <| sprintf
-        "Totals           |                  | %12.1f µs |                  | %12.1f µs | %12.1f µs"
-        (toMicro totalA)
-        (toMicro totalB)
-        (toMicro totalTime)
+        "Totals           |                  | %s |                  | %s | %s"
+        (formatTimeSpan totalA)
+        (formatTimeSpan totalB)
+        (formatTimeSpan totalTime)
