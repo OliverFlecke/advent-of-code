@@ -58,13 +58,29 @@ module private Day15 =
         Seq.sumBy (cost matrix) path
         - matrix.[fst start, snd start]
 
+    let scaleGraph scale graph =
+        let translate x = modulo (Array2D.length1 graph) x
+        let translate y = modulo (Array2D.length2 graph) y
+
+        let initer x y =
+            let value =
+                int (graph.[translate x, translate y])
+                + x / Array2D.length1 graph
+                + y / Array2D.length2 graph
+
+            if value > 9 then value - 9 else value
+
+        Array2D.init (scale * Array2D.length1 graph) (scale * Array2D.length2 graph) initer
+        |> Array2D.map uint
+
+
 type Year2021Day15() =
     interface ISolution with
         member _.year = 2021
         member _.day = 15
 
         member _.testA = seq [ (UInt 40u, None) ]
-        member _.testB = seq []
+        member _.testB = seq [ (UInt 315u, None) ]
 
         member _.solveA input =
             let graph = parse input
@@ -72,4 +88,8 @@ type Year2021Day15() =
 
             UInt <| pathCost graph path
 
-        member _.solveB input = Int 0
+        member _.solveB input =
+            let graph = parse input |> scaleGraph 5
+            let path = search graph
+
+            UInt <| pathCost graph path
