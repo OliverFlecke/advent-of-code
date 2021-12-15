@@ -136,7 +136,7 @@ let solve' graph =
 
 let solver' = parse >> solve'
 
-testSolution Level.One 36 <| solver' testData
-testSolution Level.One 103 <| solver' mediumTest
-testSolution Level.One 3509 <| solver' largeTest
+testSolution Level.Two 36 <| solver' testData
+testSolution Level.Two 103 <| solver' mediumTest
+testSolution Level.Two 3509 <| solver' largeTest
 submit 2021 12 Level.Two <| solver' data
