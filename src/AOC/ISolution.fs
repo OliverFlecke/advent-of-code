@@ -5,6 +5,7 @@ type SolutionResult =
     | Int of int
     | Int64 of int64
     | UInt of uint
+    | UInt64 of uint64
 
     override x.ToString() =
         match x with
@@ -12,6 +13,7 @@ type SolutionResult =
         | Int i -> string i
         | Int64 i -> string i
         | UInt i -> string i
+        | UInt64 i -> string i
 
 type public ISolution =
     abstract year : int
