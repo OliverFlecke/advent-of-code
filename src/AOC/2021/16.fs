@@ -25,14 +25,12 @@ module private Day16 =
         | Operator of Header * Node list
 
     let parseLiteral maxLength header (str: string) =
-        printfn "parseLiteral %s" str
+        // printfn "parseLiteral %s" str
         let rec helper l (str: string) =
             if l = 0 then [], str
             else
                 match str.[..4] |> List.ofSeq with
-                | '0' :: number when number.Length = 4 ->
-                    // printfn "Remainder '%s'" str.[5..]
-                    number, str.[5..]
+                | '0' :: number when number.Length = 4 -> number, str.[5..]
                 | '1' :: number ->
                     let result, remainder = helper (l - 5) str.[5..]
                     List.append number result, remainder
@@ -42,7 +40,7 @@ module private Day16 =
         Literal (header, result |> String.Concat), remainder
 
     let rec parseOperator header (str: string) =
-        printfn "parseOperator %s" str
+        // printfn "parseOperator %s" str
         let parseEither length version id str =
             if id = 4
             then parseLiteral length (version, id) str
@@ -63,10 +61,8 @@ module private Day16 =
             Operator (header, List.rev ls), rest
 
         else
-            let packets = str.[1..11]
-            let numberOfSubPackets = fromBinary packets
+            let numberOfSubPackets = fromBinary str.[1..11]
 
-            printfn "Subpackets: %i from: '%s' length %i" numberOfSubPackets packets packets.Length
             let mutable ls = []
             let mutable rest = str.[12..]
             for i in 1..numberOfSubPackets do
@@ -90,25 +86,49 @@ module private Day16 =
         | Literal ((version, _), _) -> version
         | Operator ((version, _), ls) -> version + Seq.sumBy sumVersions ls
 
+[<AutoOpen>]
+module private Day16B =
+    let rec evaluate =
+        function
+        | Literal (_, value) -> Convert.ToInt64(value, 2)
+        | Operator ((_, op), values) ->
+            let values = List.map evaluate values
+            match op with
+            | 0 -> Seq.sum values
+            | 1 -> Seq.reduce (*) values
+            | 2 -> Seq.min values
+            | 3 -> Seq.max values
+            | 5 -> if values.[0] > values.[1] then 1 else 0
+            | 6 -> if values.[0] < values.[1] then 1 else 0
+            | 7 -> if values.[0] = values.[1] then 1 else 0
+            | _ -> failwithf "Unsupported operator '%i'" op
+
 type Year2021Day16() =
     interface ISolution with
         member _.year = 2021
         member _.day = 16
 
-        member _.testA =
-            seq [ (Int 6, Some "D2FE28")
-                //   (Int 1, Some "38006F45291200")
-                //   (Int 1, Some "EE00D40C823060")
-                  (Int 16, Some "8A004A801A8002F478")
-                  (Int 12, Some "620080001611562C8802118E34")
-                  (Int 23, Some "C0015000016115A2E0802F182340")
-                  (Int 31, Some "A0016C880162017C3686B18A3D4780")
-                  ]
+        member _.testA = seq [
+            (Int 6, Some "D2FE28")
+            (Int 16, Some "8A004A801A8002F478")
+            (Int 12, Some "620080001611562C8802118E34")
+            (Int 23, Some "C0015000016115A2E0802F182340")
+            (Int 31, Some "A0016C880162017C3686B18A3D4780")
+        ]
 
-        member _.testB = seq []
+        member _.testB = seq [
+            (Int64 3, Some "C200B40A82")
+            (Int64 54, Some "04005AC33890")
+            (Int64 7, Some "880086C3E88112")
+            (Int64 9, Some "CE00C43D881120")
+            (Int64 1, Some "D8005AC2A8F0")
+            (Int64 0, Some "F600BC2D8F")
+            (Int64 0, Some "9C005AC2F8F0")
+            (Int64 1, Some "9C0141080250320F1802104A08")
+        ]
 
         member _.solveA input =
-            printfn "Solving %s" input
             parse input |> parseBitString |> fst |> sumVersions |> Int
 
-        member _.solveB input = Int 0
+        member _.solveB input =
+            input |> parse |> parseBitString |> fst |> evaluate |> Int64
