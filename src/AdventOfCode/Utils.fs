@@ -35,26 +35,34 @@ module Utils =
             |> Seq.groupBy id
             |> Seq.map (fun (x, xs) -> x, Seq.length xs)
 
-    /// <summary>Find the most common element in an sequence.</summary>
-    let mostCommon xs =
-        xs
-        |> Seq.groupBy id
-        |> Seq.maxBy (snd >> Seq.length)
-        |> fst
+        let takeWindow amount (list: seq<'a>) =
+            let length = Seq.length list
 
-    /// <summary>Find the least common element in a sequence.</summary>
-    let leastCommon xs =
-        xs
-        |> Seq.groupBy id
-        |> Seq.minBy (snd >> Seq.length)
-        |> fst
+            seq {
+                for i in 0 .. amount .. length - 1 do
+                    yield list |> Seq.skip i |> Seq.truncate amount
+            }
 
-    /// <summary>Sort a sequence of elements by how common they are.</summary>
-    let sortByCommon xs =
-        xs
-        |> Seq.groupBy id
-        |> Seq.sortBy (snd >> Seq.length)
-        |> Seq.map fst
+        /// <summary>Find the most common element in an sequence.</summary>
+        let mostCommon xs =
+            xs
+            |> Seq.groupBy id
+            |> Seq.maxBy (snd >> Seq.length)
+            |> fst
+
+        /// <summary>Find the least common element in a sequence.</summary>
+        let leastCommon xs =
+            xs
+            |> Seq.groupBy id
+            |> Seq.minBy (snd >> Seq.length)
+            |> fst
+
+        /// <summary>Sort a sequence of elements by how common they are.</summary>
+        let sortByCommon xs =
+            xs
+            |> Seq.groupBy id
+            |> Seq.sortBy (snd >> Seq.length)
+            |> Seq.map fst
 
     // General functional helpers
     let flip f x y = f y x
@@ -154,14 +162,6 @@ module Utils =
             && x < Array2D.length1 grid
             && 0 <= y
             && y < Array2D.length2 grid)
-
-    let take amount (list: seq<'a>) =
-        let length = Seq.length list
-
-        seq {
-            for i in 0 .. amount .. length - 1 do
-                yield list |> Seq.skip i |> Seq.take amount
-        }
 
     // Matrix operations
     let transpose (mtx: _ [,]) =
