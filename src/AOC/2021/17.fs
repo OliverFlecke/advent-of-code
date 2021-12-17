@@ -31,15 +31,11 @@ module private Day17 =
     let solve target =
         seq {
             for x in 1 .. 500 do
-                for y in -500 .. 500 do
+                for y in -500 .. 1000 do
                     match simulate target (x, y) with
-                    | Some path ->
-                        // printfn "Intial %A. Path %A" (x, y) (path |> Seq.map snd |> Seq.max)
-                        path |> Seq.map snd |> Seq.max
+                    | Some path -> path |> Seq.map snd |> Seq.max
                     | None -> ()
         }
-
-
 
 type Year2021Day17() =
     interface ISolution with
@@ -47,12 +43,10 @@ type Year2021Day17() =
         member _.day = 17
 
         member _.testA = seq [ (Int 45, None) ]
-        member _.testB = seq []
+        member _.testB = seq [ (Int 112, None) ]
 
         member _.solveA input =
-            let target = parse input
-            print target
+            input |> parse |> solve |> Seq.max |> Int
 
-            solve target |> Seq.max |> Int
-
-        member _.solveB input = Int 0
+        member _.solveB input =
+            input |> parse |> solve |> Seq.length |> Int
