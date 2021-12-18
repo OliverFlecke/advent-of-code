@@ -105,13 +105,22 @@ type Year2021Day18() =
                   (Int 445, Some "[[[[1,1],[2,2]],[3,3]],[4,4]]")
                   (Int 791, Some "[[[[3,0],[5,3]],[4,4]],[5,5]]")
                   (Int 1137, Some "[[[[5,0],[7,4]],[5,5]],[6,6]]")
-                  (Int 3488, Some "[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]") ]
+                  (Int 3488, Some "[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]")
+                  (Int 4140, None) ]
 
-        member _.testB = seq []
+        member _.testB = seq [ (Int 3993, None) ]
 
         member _.solveA input =
-            // let tree = parse input
-            // let result = tree |> Seq.reduce add
-            input |> parse |> Seq.reduce add |> magnitude |> Int
+            input
+            |> parse
+            |> Seq.reduce add
+            |> magnitude
+            |> Int
 
-        member _.solveB input = Int 0
+        member _.solveB input =
+            input
+            |> parse
+            |> Seq.pairs
+            |> Seq.map (uncurry add >> magnitude)
+            |> Seq.max
+            |> Int

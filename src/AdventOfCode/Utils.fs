@@ -64,6 +64,17 @@ module Utils =
             |> Seq.sortBy (snd >> Seq.length)
             |> Seq.map fst
 
+        /// <summary>Get all pairs in the list.</summary>
+        /// <remarks>Note that both x,y and y,x is returned.</remarks>
+        let pairs (xs: 'a seq) =
+            let ls = List.ofSeq xs
+
+            seq {
+                for x in 0 .. ls.Length - 1 do
+                    for y in 0 .. ls.Length - 1 do
+                        if x <> y then yield ls.[x], ls.[y]
+            }
+
     // General functional helpers
     let flip f x y = f y x
     let curry f a b = f (a, b)
