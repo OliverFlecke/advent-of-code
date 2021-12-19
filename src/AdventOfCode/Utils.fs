@@ -75,6 +75,21 @@ module Utils =
                         if x <> y then yield ls.[x], ls.[y]
             }
 
+    module List =
+        let pairs (ls: 'a list) =
+            seq {
+                for x in 0 .. ls.Length - 1 do
+                    for y in 0 .. ls.Length - 1 do
+                        if x <> y then yield ls.[x], ls.[y]
+            }
+
+        let pairsWithoutOrder (ls: 'a list) =
+            seq {
+                for x in 0 .. ls.Length - 1 do
+                    for y in x + 1 .. ls.Length - 1 do
+                        yield ls.[x], ls.[y]
+            }
+
     // General functional helpers
     let flip f x y = f y x
     let curry f a b = f (a, b)
