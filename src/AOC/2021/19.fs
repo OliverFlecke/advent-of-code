@@ -39,8 +39,19 @@ module private Day19 =
     let sub = operate (-)
     let mul = operate (*)
 
-    type Axis = XPos | XNeg | YPos | YNeg | ZPos | ZNeg
-    type Rotation = Rot0 | Rot90 | Rot180 | Rot270
+    type Axis =
+        | XPos
+        | XNeg
+        | YPos
+        | YNeg
+        | ZPos
+        | ZNeg
+
+    type Rotation =
+        | Rot0
+        | Rot90
+        | Rot180
+        | Rot270
 
     let transform up rotation (x, y, z) =
         let (ox, oy, oz) =
@@ -71,7 +82,9 @@ module private Day19 =
             |> Seq.tryPick (fun (b1, b2) ->
                 let delta = sub b1 b2
                 let alignedS2 = Seq.map (add delta) rotatedS2
-                let intersection = Seq.filter (fun b -> Set.contains b s1) alignedS2
+
+                let intersection =
+                    Seq.filter (fun b -> Set.contains b s1) alignedS2
 
                 if (Seq.truncate 12 intersection |> Seq.length) = 12 then
                     Some(Set.ofSeq alignedS2, delta, axis, rot)
@@ -86,7 +99,9 @@ module private Day19 =
                 match align b1 b2 with
                 | None -> merge (s1, b1) (accScanners, accBeacons) rest ((s2, b2) :: unmerged)
                 | Some (alignedBeacons, delta, axis, rot) ->
-                    let alignedScanners = Set.map (transform axis rot >> add delta) s2
+                    let alignedScanners =
+                        Set.map (transform axis rot >> add delta) s2
+
                     let newScanners = Set.union alignedScanners accScanners
                     let newBeacons = Set.union alignedBeacons accBeacons
                     merge (s1, b1) (newScanners, newBeacons) rest unmerged
@@ -97,8 +112,15 @@ module private Day19 =
         match unmerged with
         | [] -> scanners, beacons
         | _ ->
-            printfn "%d" (List.length unmerged)
+            printfn "Remaining to be merged: %d" (List.length unmerged)
             reduce ((scanners, beacons) :: unmerged)
+
+    let solve =
+        parse
+        >> List.map snd
+        >> List.map (fun scans -> Set.singleton (0, 0, 0), scans)
+        >> reduce
+
 
 type Year2021Day19() =
     interface ISolution with
@@ -106,16 +128,17 @@ type Year2021Day19() =
         member _.day = 19
 
         member _.testA = seq [ (Int 79, None) ]
-        member _.testB = seq []
+        member _.testB = seq [ (Int 3621, None) ]
 
         member _.solveA input =
-            let (scanners, beacons) =
-                input
-                |> parse
-                |> List.map snd
-                |> List.map (fun scans -> Set.singleton (0, 0, 0), scans)
-                |> reduce
+            input |> solve |> snd |> Set.count |> Int
 
-            Set.count beacons |> Int
+        member _.solveB input =
+            let scanners, _ = solve input
 
-        member _.solveB input = Int 0
+            Seq.allPairs scanners scanners
+            |> Seq.filter (uncurry (<>))
+            |> Seq.map (uncurry sub)
+            |> Seq.map (fun (x, y, z) -> abs x + abs y + abs z)
+            |> Seq.max
+            |> Int
