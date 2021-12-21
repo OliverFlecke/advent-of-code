@@ -2,6 +2,7 @@ namespace AdventOfCode.Solutions
 
 open AdventOfCode
 open AdventOfCode.Utils
+open System.Collections.Generic
 
 [<AutoOpen>]
 module private Day21 =
@@ -41,6 +42,50 @@ module private Day21 =
 
         helper (0, 0) 0 positions
 
+[<AutoOpen>]
+module private Day21B =
+    let permutations =
+        seq {
+            for i in 1 .. 3 do
+                for j in 1 .. 3 do
+                    for k in 1 .. 3 do
+                        yield i, j, k
+        }
+
+    let solve' (p1, p2) =
+        let cache =
+            new Dictionary<int * int * int * int, uint64 * uint64>()
+
+        let rec wins (s1, s2) (p1, p2) =
+            if s1 >= 21 then
+                1UL, 0UL
+            elif s2 >= 21 then
+                0UL, 1UL
+            else
+                let key = (p1, p2, s1, s2)
+
+                let hit, value = cache.TryGetValue key
+
+                if hit then
+                    value
+                else
+                    let mutable a, b = 0UL, 0UL
+
+                    for (d1, d2, d3) in permutations |> List.ofSeq do
+                        let p1' = (p1 + d1 + d2 + d3) % 10
+                        let s1' = s1 + p1' + 1
+
+                        let x1, y1 = wins (s2, s1') (p2, p1')
+                        do a <- a + y1
+                        do b <- b + x1
+
+                    do cache.[key] <- (a, b)
+                    a, b
+
+        wins (0, 0) (p1 - 1, p2 - 1)
+        |> uncurry max
+        |> uint64
+
 
 type Year2021Day21() =
     interface ISolution with
@@ -48,8 +93,8 @@ type Year2021Day21() =
         member _.day = 21
 
         member _.testA = seq [ (Int 739785, None) ]
-        member _.testB = seq []
+        member _.testB = seq [ (UInt64 444356092776315UL, None) ]
 
         member _.solveA input = input |> parse |> solve |> Int
 
-        member _.solveB input = Int 0
+        member _.solveB input = input |> parse |> solve' |> UInt64
