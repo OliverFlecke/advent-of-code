@@ -93,6 +93,13 @@ module private Day22B =
         addCubes
         >> Seq.sumBy (fun c -> countCube c * (if c.on then 1L else -1L))
 
+    let limitCube limit cube = {
+        on = cube.on
+        x = { min = max -limit cube.x.min; max = min limit cube.x.max}
+        y = { min = max -limit cube.y.min; max = min limit cube.y.max}
+        z = { min = max -limit cube.z.min; max = min limit cube.z.max}
+    }
+
 type Year2021Day22() =
     interface ISolution with
         member _.year = 2021
@@ -101,7 +108,7 @@ type Year2021Day22() =
         member _.testA = seq [ (Int 590784, None) ]
 
         member _.solveA input =
-            input |> parse |> solve 50 |> Set.count |> Int
+            input |> parse |> Seq.map (limitCube 50) |> solve' |> int |> Int
 
         member _.solveB input = input |> parse |> solve' |> Int64
 
