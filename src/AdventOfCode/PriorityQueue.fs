@@ -153,3 +153,5 @@ module PriorityQ =
         |> toSeq
         |> Seq.map (fun (k, v) -> f k v)
         |> fromSeq
+
+    let singleton cost value = push cost value empty

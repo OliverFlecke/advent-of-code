@@ -179,6 +179,12 @@ module Utils =
                     if x <> 0 || y <> 0 then yield (x, y)
         }
 
+    let directionWithoutDiagonals =
+        Seq.ofList [ (0, 1)
+                     (1, 0)
+                     (-1, 0)
+                     (0, -1) ]
+
     /// <summary>Get all the neighbors inside the grid.</summary>
     let neighbors grid p =
         directions

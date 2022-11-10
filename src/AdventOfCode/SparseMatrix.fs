@@ -5,6 +5,7 @@ open System
 type SparseMatrix<'a> = Map<(int * int), 'a>
 
 module SparseMatrix =
+    /// Returns the bounds a (x_min, x_max, y_min, y_max)
     let bounds (matrix: SparseMatrix<'a>) =
         matrix
         |> Map.keys
